@@ -2,6 +2,13 @@
 
 A simple text editor
 
+## Project status
+
+Early WIP. I DON'T recommend to use it for file editing.
+Although some basic features (open, save files) surprisingly work,
+there are cruical features missing, like confirmation dialogs.
+You might end up corrupting some document by saving it before you really want to.
+
 ## Roadmap
 
 - Basic text editing (open, save files)
@@ -10,6 +17,8 @@ A simple text editor
 - Tab support
 - Plugins (auto-discovery; no plugins by default)
 - Splitting the window into multiple working areas
+- Binary files (some handling is needed for them I guess. Just added this point as a reminder)
+- Error handling (failed to save a file?)
 
 ## Building
 

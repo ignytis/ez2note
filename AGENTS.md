@@ -8,6 +8,7 @@
 ## Coding style
 
 - Follow the Qt Coding Style
+- Order the `#include` statements alphabetically
 
 ## Project structure
 
