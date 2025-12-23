@@ -1,3 +1,15 @@
+
+# Editors
+.vscode
+.project
+.zed
+
+# Build directory
+build
+
+# Qt files START
+# Credits: https://github.com/github/gitignore/blob/main/Qt.gitignore
+
 # C++ objects and libs
 *.slo
 *.lo
@@ -52,3 +64,5 @@ compile_commands.json
 *creator.user*
 
 *_qmlcache.qrc
+
+# Qt files END
