@@ -8,3 +8,8 @@
 ## Coding style
 
 - Follow the Qt Coding Style
+
+## Project structure
+
+- All *.cpp and *.h source files are located in `src` directory
+- Source code for windows is in `src/gui/windows/<window name>`. All window-specific components are placed in the same directory

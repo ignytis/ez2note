@@ -17,6 +17,6 @@ OBJECTS_DIR = build
 #DEFINES += QT_DISABLE_DEPRECATED_UP_TO=0x060000 # disables all APIs deprecated in Qt 6.0.0 and earlier
 
 # Input
-HEADERS += src/gui/windows/mainwindow.h
+HEADERS += src/gui/windows/mainwindow/mainwindow.h
 SOURCES += src/main.cpp \
-           src/gui/windows/mainwindow.cpp
+           src/gui/windows/mainwindow/mainwindow.cpp

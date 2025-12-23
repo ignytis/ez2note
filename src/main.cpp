@@ -4,7 +4,7 @@
 #include <QMenuBar>
 #include <QMenu>
 
-#include "gui/windows/mainwindow.h"
+#include "gui/windows/mainwindow/mainwindow.h"
 
 
 int main(int argc, char *argv[])
