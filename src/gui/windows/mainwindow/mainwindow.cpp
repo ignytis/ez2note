@@ -17,20 +17,33 @@ MainWindow::MainWindow(QWidget *parent)
     // Create a File menu
     QMenu *fileMenu = menuBar->addMenu("File");
 
-    // Add actions to the File menu (e.g., New, Open, Save, Exit)
     QAction *newAction = fileMenu->addAction("New");
-    QAction *openAction = fileMenu->addAction("Open");
-    QAction *saveAction = fileMenu->addAction("Save");
-    QAction *saveAsAction = fileMenu->addAction("Save As...");
-    fileMenu->addSeparator();
-    QAction *exitAction = fileMenu->addAction("Exit");
-
-    // Connect actions to slots
+    newAction->setShortcut(QKeySequence::New);
+    newAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::DocumentNew));
     connect(newAction, &QAction::triggered, this, &MainWindow::onNew);
+
+    QAction *openAction = fileMenu->addAction("Open");
+    openAction->setShortcut(QKeySequence::Open);
+    openAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::DocumentOpen));
     connect(openAction, &QAction::triggered, this, &MainWindow::onOpen);
+
+    QAction *saveAction = fileMenu->addAction("Save");
+    saveAction->setShortcut(QKeySequence::Save);
+    saveAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::DocumentSave));
     connect(saveAction, &QAction::triggered, this, &MainWindow::onSave);
+
+    QAction *saveAsAction = fileMenu->addAction("Save As...");
+    saveAsAction->setShortcut(QKeySequence::SaveAs);
+    saveAsAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::DocumentSaveAs));
     connect(saveAsAction, &QAction::triggered, this, &MainWindow::onSaveAs);
+
+    fileMenu->addSeparator();
+
+    QAction *exitAction = fileMenu->addAction("Exit");
+    exitAction->setShortcut(QKeySequence::Quit);
+    exitAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::ApplicationExit));
     connect(exitAction, &QAction::triggered, this, &MainWindow::close);
+
 
     connect(textEdit->document(), &QTextDocument::contentsChanged,
             this, &MainWindow::documentWasModified);
