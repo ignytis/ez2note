@@ -2,15 +2,18 @@
 #define GUI_WINDOWS_MAINWINDOW_MAINWINDOW_H
 
 #include <QAction>
+#include <QApplication>
 #include <QFile>
 #include <QFileDialog>
 #include <QMainWindow>
 #include <QMenu>
 #include <QMenuBar>
-#include <QMessageBox>
 #include <QString>
 #include <QTextEdit>
 
+/**
+ * Main window which displays on start up
+ */
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
