@@ -3,6 +3,7 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QCloseEvent>
 #include <QFile>
 #include <QFileDialog>
 #include <QMainWindow>
@@ -21,12 +22,20 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
 
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
 private slots:
     void onNew();
     void onOpen();
-    void onSave();
+    bool onSave();
+    bool onSaveAs();
+    void documentWasModified();
 
 private:
+    bool maybeSave();
+    void setCurrentFile(const QString &fileName);
+
     QTextEdit *textEdit;
     QString currentFile;
 };
