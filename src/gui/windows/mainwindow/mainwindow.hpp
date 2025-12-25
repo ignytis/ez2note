@@ -12,6 +12,7 @@
 #include <QString>
 #include <QTextEdit>
 
+#include "../../../constants.hpp"
 #include "../about/about.hpp"
 
 /**

@@ -18,8 +18,9 @@ OBJECTS_DIR = build
 
 # Input
 HEADERS += src/app.hpp \
+           src/constants.hpp \
            src/gui/windows/about/about.hpp \
-           src/gui/windows/mainwindow/mainwindow.hpp \
+           src/gui/windows/mainwindow/mainwindow.hpp
 SOURCES += src/app.cpp \
            src/main.cpp \
            src/gui/windows/about/about.cpp \

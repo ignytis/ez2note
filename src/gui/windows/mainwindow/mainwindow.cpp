@@ -131,7 +131,7 @@ bool MainWindow::maybeSave()
         return true;
 
     const QMessageBox::StandardButton ret
-        = QMessageBox::warning(this, "ez2note",
+        = QMessageBox::warning(this, APP_NAME,
                                "The document has been modified.\n"
                                "Do you want to save your changes?",
                                QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
@@ -157,7 +157,7 @@ void MainWindow::setCurrentFile(const QString &fileName)
     if (currentFile.isEmpty())
         shownName = "untitled.txt";
     setWindowFilePath(shownName);
-    setWindowTitle(QString("%1[*] - %2").arg(QFileInfo(shownName).fileName()).arg("ez2note"));
+    setWindowTitle(QString("%1[*] - %2").arg(QFileInfo(shownName).fileName()).arg(APP_NAME));
 }
 
 void MainWindow::onAbout()

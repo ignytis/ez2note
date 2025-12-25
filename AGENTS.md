@@ -18,7 +18,6 @@
 - Return early if the whole remaining code inside function is if-else statement
 - Prefer explicit type declaration over `auto` keyword
 - Inside project, prefer relative paths in `#include` statements
-- Avoid fixed sizes of widgets and windows
 
 ## Project structure
 

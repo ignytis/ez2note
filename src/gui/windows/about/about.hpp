@@ -6,6 +6,8 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 
+#include "../../../constants.hpp"
+
 /**
  * @brief The About class provides an "about" modal dialog window.
  */

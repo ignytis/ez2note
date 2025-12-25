@@ -11,11 +11,11 @@
 About::About(QWidget *parent)
     : QDialog(parent)
 {
-    setWindowTitle(tr("About ez2note"));
+    setWindowTitle(tr("About %1").arg(APP_NAME));
 
     QVBoxLayout *layout = new QVBoxLayout(this);
 
-    QLabel *appName = new QLabel("<b>ez2note</b>", this);
+    QLabel *appName = new QLabel(tr("<b>%1 %2</b>").arg(APP_NAME).arg(APP_VERSION), this);
     appName->setAlignment(Qt::AlignCenter);
     layout->addWidget(appName);
 
