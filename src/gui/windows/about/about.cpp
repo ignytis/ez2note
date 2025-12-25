@@ -19,12 +19,12 @@ About::About(QWidget *parent)
     appName->setAlignment(Qt::AlignCenter);
     layout->addWidget(appName);
 
-    QLabel *appDescription = new QLabel(tr("A simple and easy-to-use note-taking application."), this);
+    QLabel *appDescription = new QLabel(tr(APP_DESCRIPTION), this);
     appDescription->setAlignment(Qt::AlignCenter);
     layout->addWidget(appDescription);
 
     QLabel *homepage = new QLabel(this);
-    homepage->setText(tr("Project Homepage: <a href=\"https://github.com/ignytis/ez2note\">https://github.com/ignytis/ez2note</a>"));
+    homepage->setText(tr("Project Homepage: <a href=\"%1\">%1</a>").arg(APP_HOMEPAGE));
     homepage->setAlignment(Qt::AlignCenter);
     homepage->setOpenExternalLinks(true);
     layout->addWidget(homepage);

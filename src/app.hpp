@@ -2,11 +2,13 @@
 #define APP_H
 
 #include <QApplication>
+#include <QCommandLineParser>
 #include <QMainWindow>
 #include <QMenuBar>
 #include <QMenu>
 #include <QTextEdit>
 
+#include "constants.hpp"
 #include "gui/windows/mainwindow/mainwindow.hpp"
 
 /**

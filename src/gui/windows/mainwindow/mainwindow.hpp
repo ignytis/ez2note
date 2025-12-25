@@ -1,5 +1,5 @@
-#ifndef GUI_WINDOWS_MAINWINDOW_MAINWINDOW_H
-#define GUI_WINDOWS_MAINWINDOW_MAINWINDOW_H
+#ifndef GUI_WINDOWS_MAINWINDOW_MAINWINDOW_HPP
+#define GUI_WINDOWS_MAINWINDOW_MAINWINDOW_HPP
 
 #include <QAction>
 #include <QApplication>
@@ -24,6 +24,7 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
+    MainWindow(const QString &filePath, QWidget *parent = nullptr);
 
 protected:
     void closeEvent(QCloseEvent *event) override;
@@ -39,9 +40,10 @@ private slots:
 private:
     bool maybeSave();
     void setCurrentFile(const QString &fileName);
+    void openFile(const QString &filePath);
 
     QTextEdit *textEdit;
     QString currentFile;
 };
 
-#endif // GUI_WINDOWS_MAINWINDOW_MAINWINDOW_H
+#endif // GUI_WINDOWS_MAINWINDOW_MAINWINDOW_HPP

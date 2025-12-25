@@ -56,7 +56,16 @@ MainWindow::MainWindow(QWidget *parent)
     connect(textEdit->document(), &QTextDocument::contentsChanged,
             this, &MainWindow::documentWasModified);
 
-    setCurrentFile(QString());
+    if (currentFile.isEmpty())
+        setCurrentFile(QString());
+}
+
+MainWindow::MainWindow(const QString &filePath, QWidget *parent)
+    : MainWindow(parent)
+{
+    if (!filePath.isEmpty()) {
+        openFile(filePath);
+    }
 }
 
 void MainWindow::onNew()
@@ -77,15 +86,7 @@ void MainWindow::onOpen()
     if (fileName.isEmpty())
         return;
 
-    QFile file(fileName);
-    if (!file.open(QIODevice::ReadOnly | QFile::Text))
-        return;
-
-    QTextStream in(&file);
-    QString text = in.readAll();
-    textEdit->setText(text);
-    file.close();
-    setCurrentFile(fileName);
+    openFile(fileName);
 }
 
 bool MainWindow::onSave()
@@ -158,6 +159,20 @@ void MainWindow::setCurrentFile(const QString &fileName)
         shownName = "untitled.txt";
     setWindowFilePath(shownName);
     setWindowTitle(QString("%1[*] - %2").arg(QFileInfo(shownName).fileName()).arg(APP_NAME));
+}
+
+void MainWindow::openFile(const QString &filePath)
+{
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
+        QMessageBox::warning(this, "Error", QString("Could not open file: %1").arg(filePath));
+        return;
+    }
+
+    QTextStream in(&file);
+    textEdit->setText(in.readAll());
+    file.close();
+    setCurrentFile(filePath);
 }
 
 void MainWindow::onAbout()

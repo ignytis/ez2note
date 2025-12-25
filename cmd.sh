@@ -5,7 +5,7 @@ set -eo pipefail
 COMMAND=$1
 
 function compile {
-    make
+    make -j`$(nproc)`
 }
 
 function run {

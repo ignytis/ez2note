@@ -1,5 +1,5 @@
-#ifndef GUI_WINDOWS_ABOUT_ABOUT_H
-#define GUI_WINDOWS_ABOUT_ABOUT_H
+#ifndef GUI_WINDOWS_ABOUT_ABOUT_HPP
+#define GUI_WINDOWS_ABOUT_ABOUT_HPP
 
 #include <QDialog>
 #include <QLabel>
@@ -19,4 +19,4 @@ public:
     explicit About(QWidget *parent = nullptr);
 };
 
-#endif // GUI_WINDOWS_ABOUT_ABOUT_H
+#endif // GUI_WINDOWS_ABOUT_ABOUT_HPP
