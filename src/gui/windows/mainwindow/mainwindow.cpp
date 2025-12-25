@@ -2,6 +2,7 @@
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QTextStream>
+#include "gui/windows/about/about.hpp"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -43,6 +44,13 @@ MainWindow::MainWindow(QWidget *parent)
     exitAction->setShortcut(QKeySequence::Quit);
     exitAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::ApplicationExit));
     connect(exitAction, &QAction::triggered, this, &MainWindow::close);
+
+    // Create a Help menu
+    QMenu *helpMenu = menuBar->addMenu("Help");
+    QAction *aboutAction = helpMenu->addAction("About");
+    aboutAction->setShortcut(QKeySequence::HelpContents);
+    aboutAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::HelpAbout));
+    connect(aboutAction, &QAction::triggered, this, &MainWindow::onAbout);
 
 
     connect(textEdit->document(), &QTextDocument::contentsChanged,
@@ -150,4 +158,10 @@ void MainWindow::setCurrentFile(const QString &fileName)
         shownName = "untitled.txt";
     setWindowFilePath(shownName);
     setWindowTitle(QString("%1[*] - %2").arg(QFileInfo(shownName).fileName()).arg("ez2note"));
+}
+
+void MainWindow::onAbout()
+{
+    About aboutDialog(this);
+    aboutDialog.exec();
 }

@@ -20,6 +20,11 @@ You might end up corrupting some document by saving it before you really want to
 - Binary files (some handling is needed for them I guess. Just added this point as a reminder)
 - Error handling (failed to save a file?)
 
+## Some few ideas
+
+- Respect the system color theme. Didn't succeed in Fedora Linux as the system always returns `Qt::ColorScheme::Light`
+- Replace the system title bar with custom frame. There are some complexities with drag and drop + resizing the frameless window
+
 ## Building
 
 ### Prerequisites

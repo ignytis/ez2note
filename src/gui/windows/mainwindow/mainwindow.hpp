@@ -12,6 +12,8 @@
 #include <QString>
 #include <QTextEdit>
 
+#include "../about/about.hpp"
+
 /**
  * Main window which displays on start up
  */
@@ -31,6 +33,7 @@ private slots:
     bool onSave();
     bool onSaveAs();
     void documentWasModified();
+    void onAbout();
 
 private:
     bool maybeSave();
