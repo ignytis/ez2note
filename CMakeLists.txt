@@ -12,10 +12,10 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets)
 qt_standard_project_setup()
 
 qt_add_executable(ez2note
-src/app.cpp
-src/main.cpp
-src/gui/windows/about/about.cpp
-src/gui/windows/mainwindow/mainwindow.cpp
+    src/app.cpp
+    src/main.cpp
+    src/gui/windows/about/about.cpp
+    src/gui/windows/mainwindow/mainwindow.cpp
 )
 
 target_include_directories(ez2note PRIVATE src)
