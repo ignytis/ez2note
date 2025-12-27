@@ -20,6 +20,8 @@ public:
     App(int argc, char *argv[]);
 
     int exec();
+private:
+    QCommandLineParser parser;
 };
 
 #endif // APP_H
