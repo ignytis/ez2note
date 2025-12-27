@@ -2,7 +2,8 @@
 
 ## General instructions
 
-- The project uses Qt framework. Use `qmake` to build the project
+- The project uses Qt framework
+- CMake is used as a build system
 - The compiled binary `ez2note` is located in `build` directory
 
 ## Coding style
@@ -10,7 +11,7 @@
 - Follow the Qt Coding Style
 - Order alphabetically such lists as:
   - `#include` statements
-  - File lists in `ez2note.pro`
+  - File lists in `CMakeLists.txt`
 - Group include statements: global includes e.g. `<QWidget>` are placed before relative includes like `"mywidget.h"`. Groups are separated with empty line.
 - Include guards in header files have a `_H` suffix and include a path to header file relatively to `src` directory. Example: `src/dir/subdir/mywidget.hpp` -> `DIR_SUBDIR_MYWIDGET_HPP`
 - Prefer includes `#include <QSomeWidget>` over forward declarations
