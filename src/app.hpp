@@ -1,25 +1,17 @@
-#ifndef APP_H
-#define APP_H
+#ifndef APP_HPP
+#define APP_HPP
 
-#include <QApplication>
-#include <QCommandLineParser>
-#include <QMainWindow>
-#include <QMenuBar>
-#include <QMenu>
-#include <QTextEdit>
+#include <wx/wx.h>
 
-#include "constants.hpp"
-#include "gui/windows/mainwindow/mainwindow.hpp"
+namespace Ez2note
+{
 
-/**
- * Main class of application
- */
-class App: public QApplication
+class App : public wxApp
 {
 public:
-    App(int argc, char *argv[]);
-
-    int exec();
+    virtual bool OnInit();
 };
 
-#endif // APP_H
+}
+
+#endif // APP_HPP

@@ -1,24 +1,39 @@
+#include <wx/cmdline.h>
+
 #include "app.hpp"
+#include "gui/windows/main/mainwindow.hpp"
 
-App::App(int argc, char *argv[])
-    : QApplication(argc, argv)
+using namespace Ez2note;
+using namespace Ez2note::Gui::Windows::Main;
+
+static const wxCmdLineEntryDesc CMD_LINE_DESC[] =
 {
-    QApplication::setApplicationName(APP_NAME);
-    QApplication::setApplicationVersion(APP_VERSION);
-}
+    { wxCMD_LINE_PARAM, NULL, NULL, "input file", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+    { wxCMD_LINE_SWITCH, "h", "help", "show this help message", wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP },
+    { wxCMD_LINE_NONE }
+};
 
-int App::exec()
+bool App::OnInit()
 {
-    QCommandLineParser parser;
-    parser.setApplicationDescription(APP_DESCRIPTION);
-    parser.addHelpOption();
-    parser.addVersionOption();
-    parser.addPositionalArgument("file", "The file to open.");
-    parser.process(*this);
+    wxCmdLineParser parser(CMD_LINE_DESC, argc, argv);
+    parser.SetSwitchChars(wxT("-"));
 
-    const QStringList args = parser.positionalArguments();
-    MainWindow window(args.isEmpty() ? "" : args.first());
-    window.resize(800, 600);
-    window.show();
-    return QApplication::exec();
+    int ret = parser.Parse(true);
+    if (ret != 0) {
+        // -1 means error, 1 means help was shown
+        return false;
+    }
+
+    wxString m_fileName;
+    if (parser.GetParamCount() > 0)
+    {
+        m_fileName = parser.GetParam(0);
+    }
+
+    MainWindow *window = new MainWindow();
+    if (!m_fileName.IsEmpty()) {
+        window->OpenFile(m_fileName);
+    }
+    window->Show(true);
+    return true;
 }

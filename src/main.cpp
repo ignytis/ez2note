@@ -1,7 +1,7 @@
+#include <wx/wx.h>
+
 #include "app.hpp"
 
-int main(int argc, char *argv[])
-{
-    App app(argc, argv);
-    return app.exec();
-}
+using namespace Ez2note;
+
+wxIMPLEMENT_APP(App);
