@@ -5,13 +5,15 @@ using namespace Ez2note::Gui::Windows::FindReplace;
 enum {
     ID_FIND_TEXT = 1,
     ID_REPLACE_TEXT,
-    ID_FIND_BUTTON,
+    ID_FINDNEXT_BUTTON,
+    ID_FINDPREV_BUTTON,
     ID_REPLACE_BUTTON,
     ID_REPLACE_ALL_BUTTON
 };
 
 wxBEGIN_EVENT_TABLE(FindReplaceDialog, wxDialog)
-    EVT_BUTTON(ID_FIND_BUTTON, FindReplaceDialog::OnFind)
+    EVT_BUTTON(ID_FINDNEXT_BUTTON, FindReplaceDialog::OnFindNext)
+    EVT_BUTTON(ID_FINDPREV_BUTTON, FindReplaceDialog::OnFindPrev)
     EVT_BUTTON(ID_REPLACE_BUTTON, FindReplaceDialog::OnReplace)
     EVT_BUTTON(ID_REPLACE_ALL_BUTTON, FindReplaceDialog::OnReplaceAll)
 wxEND_EVENT_TABLE()
@@ -35,7 +37,8 @@ FindReplaceDialog::FindReplaceDialog(wxWindow *parent, wxStyledTextCtrl *textEdi
     sizer->Add(gridSizer, 1, wxEXPAND | wxALL, 10);
 
     wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
-    buttonSizer->Add(new wxButton(this, ID_FIND_BUTTON, "Find"), 0, wxRIGHT, 5);
+    buttonSizer->Add(new wxButton(this, ID_FINDNEXT_BUTTON, "Find next"), 0, wxRIGHT, 5);
+    buttonSizer->Add(new wxButton(this, ID_FINDPREV_BUTTON, "Find previous"), 0, wxRIGHT, 5);
     buttonSizer->Add(new wxButton(this, ID_REPLACE_BUTTON, "Replace"), 0, wxRIGHT, 5);
     buttonSizer->Add(new wxButton(this, ID_REPLACE_ALL_BUTTON, "Replace All"), 0, wxRIGHT, 5);
     buttonSizer->Add(new wxButton(this, wxID_CANCEL, "Cancel"), 0);
@@ -49,7 +52,7 @@ FindReplaceDialog::FindReplaceDialog(wxWindow *parent, wxStyledTextCtrl *textEdi
 
 }
 
-void FindReplaceDialog::OnFind(wxCommandEvent &event) {
+void FindReplaceDialog::OnFindNext(wxCommandEvent &event) {
     wxString searchTerm = findText->GetValue();
     if (searchTerm.IsEmpty()) {
         return;
@@ -61,6 +64,24 @@ void FindReplaceDialog::OnFind(wxCommandEvent &event) {
 
     if (nextPos != wxSTC_INVALID_POSITION) {
         textEdit->SetSelection(nextPos, nextPos + searchTerm.Length());
+        textEdit->EnsureCaretVisible();
+    } else {
+        wxMessageBox("Text not found.", "Find", wxOK | wxICON_INFORMATION);
+    }
+}
+
+void FindReplaceDialog::OnFindPrev(wxCommandEvent &event) {
+    wxString searchTerm = findText->GetValue();
+    if (searchTerm.IsEmpty()) {
+        return;
+    }
+
+    textEdit->SearchAnchor();
+    // FIXME: it search the first occurrence only. Need to save the state of search and look up further occurrences
+    int prevPos = textEdit->SearchPrev(0, searchTerm);
+
+    if (prevPos != wxSTC_INVALID_POSITION) {
+        textEdit->SetSelection(prevPos, prevPos + searchTerm.Length());
         textEdit->EnsureCaretVisible();
     } else {
         wxMessageBox("Text not found.", "Find", wxOK | wxICON_INFORMATION);
@@ -79,7 +100,7 @@ void FindReplaceDialog::OnReplace(wxCommandEvent &event) {
         textEdit->ReplaceSelection(replaceTerm);
     }
 
-    OnFind(event);
+    OnFindNext(event);
 }
 
 void FindReplaceDialog::OnReplaceAll(wxCommandEvent &event) {

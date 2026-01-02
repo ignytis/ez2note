@@ -16,7 +16,8 @@ public:
     FindReplaceDialog(wxWindow *parent, wxStyledTextCtrl *textEdit);
 
 private:
-    void OnFind(wxCommandEvent &event);
+    void OnFindNext(wxCommandEvent &event);
+    void OnFindPrev(wxCommandEvent &event);
     void OnReplace(wxCommandEvent &event);
     void OnReplaceAll(wxCommandEvent &event);
     void OnCancel(wxCommandEvent &event);
