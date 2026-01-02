@@ -11,7 +11,7 @@
 - Order alphabetically such lists as:
   - `#include` statements
   - File lists in `CMakeLists.txt`
-- Group include statements: global includes e.g. `<MyWid>` are placed before relative includes like `"mywidget.h"`. Groups are separated with empty line.
+- Group include statements: global includes e.g. `<MyWidget>` are placed before relative includes like `"mywidget.h"`. Groups are separated with empty line.
 - Include guards in header files have a `_HPP` suffix and include a path to header file relatively to `src` directory. Example: `src/dir/subdir/mywidget.hpp` -> `DIR_SUBDIR_MYWIDGET_HPP`
 - Prefer includes `#include <SomeWidget>` over forward declarations
 - Prefer ternary operators instead of if-else blocks with single statements
