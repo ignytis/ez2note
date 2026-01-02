@@ -1,4 +1,5 @@
 #include "findreplacedialog.hpp"
+#include "wx/log.h"
 
 using namespace Ez2note::Gui::Windows::FindReplace;
 
@@ -37,8 +38,8 @@ FindReplaceDialog::FindReplaceDialog(wxWindow *parent, wxStyledTextCtrl *textEdi
     sizer->Add(gridSizer, 1, wxEXPAND | wxALL, 10);
 
     wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
-    buttonSizer->Add(new wxButton(this, ID_FINDNEXT_BUTTON, "Find next"), 0, wxRIGHT, 5);
     buttonSizer->Add(new wxButton(this, ID_FINDPREV_BUTTON, "Find previous"), 0, wxRIGHT, 5);
+    buttonSizer->Add(new wxButton(this, ID_FINDNEXT_BUTTON, "Find next"), 0, wxRIGHT, 5);
     buttonSizer->Add(new wxButton(this, ID_REPLACE_BUTTON, "Replace"), 0, wxRIGHT, 5);
     buttonSizer->Add(new wxButton(this, ID_REPLACE_ALL_BUTTON, "Replace All"), 0, wxRIGHT, 5);
     buttonSizer->Add(new wxButton(this, wxID_CANCEL, "Cancel"), 0);
@@ -58,8 +59,8 @@ void FindReplaceDialog::OnFindNext(wxCommandEvent &event) {
         return;
     }
 
+    textEdit->GotoPos(textEdit->GetSelectionEnd() + 1);
     textEdit->SearchAnchor();
-    // FIXME: it search the first occurrence only. Need to save the state of search and look up further occurrences
     int nextPos = textEdit->SearchNext(0, searchTerm);
 
     if (nextPos != wxSTC_INVALID_POSITION) {
@@ -76,8 +77,8 @@ void FindReplaceDialog::OnFindPrev(wxCommandEvent &event) {
         return;
     }
 
+    textEdit->GotoPos(textEdit->GetSelectionStart());
     textEdit->SearchAnchor();
-    // FIXME: it search the first occurrence only. Need to save the state of search and look up further occurrences
     int prevPos = textEdit->SearchPrev(0, searchTerm);
 
     if (prevPos != wxSTC_INVALID_POSITION) {
