@@ -3,6 +3,8 @@
 
 #include <wx/wx.h>
 
+#include "../../../config.hpp"
+
 #define ID_MENU_VIEW_TOGGLE_LINE_NUMBERS 101
 #define ID_MENU_VIEW_TOGGLE_WORD_WRAP 102
 
@@ -21,13 +23,15 @@ namespace Main
 class MenuBar : public wxMenuBar
 {
 public:
-    MenuBar();
+    MenuBar(Ez2note::Config &config);
 
+private:
+    Ez2note::Config &config;
 };
 
-}
-}
-}
-}
+} // namespace Main
+} // namespace Windows
+} // namespace Gui
+} // namespace Ez2note
 
 #endif // GUI_WINDOWS_MAIN_MENUBAR_HPP

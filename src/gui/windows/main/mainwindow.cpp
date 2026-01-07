@@ -1,3 +1,5 @@
+#include "mainwindow.hpp"
+
 #include <wx/display.h>
 #include <wx/stc/stc.h>
 #include <wx/wx.h>
@@ -5,7 +7,6 @@
 #include "../../../constants.hpp"
 #include "../about/aboutwindow.hpp"
 #include "../findreplace/findreplacedialog.hpp"
-#include "mainwindow.hpp"
 #include "menubar.hpp"
 
 
@@ -38,19 +39,19 @@ int showDocumentModifiedDialog()
 }
 
 
-MainWindow::MainWindow()
-    : wxFrame(NULL, wxID_ANY, EZ2NOTE_APP_NAME)
+MainWindow::MainWindow(Ez2note::Config &config)
+    : wxFrame(NULL, wxID_ANY, EZ2NOTE_APP_NAME), config(config)
 {
     // By default, set the window size to 1/2 of the screen size
     wxDisplay display;
     this->SetSize(display.GetClientArea().GetSize() / 2);
 
-    SetMenuBar(new MenuBar);
+    SetMenuBar(new MenuBar(config));
 
     textEdit = new wxStyledTextCtrl(this, wxID_ANY);
-    textEdit->SetMarginWidth(1, 0);
+    textEdit->SetMarginWidth(1, config.getBool("showLineNumbers") ? 50 : 0);
     textEdit->SetMarginType(1, wxSTC_MARGIN_NUMBER);
-    textEdit->SetWrapMode(wxSTC_WRAP_NONE);
+    textEdit->SetWrapMode(config.getBool("wordWrap") ? wxSTC_WRAP_WORD : wxSTC_WRAP_NONE);
 
     CreateStatusBar();
     SetStatusText(wxString::Format("Welcome to %s!", EZ2NOTE_APP_NAME));
