@@ -22,6 +22,7 @@ wxBEGIN_EVENT_TABLE(MainWindow, wxFrame)
     EVT_MENU(wxID_EXIT, MainWindow::OnExit)
     EVT_MENU(ID_MENU_EDIT_FIND_REPLACE, MainWindow::OnFindReplace)
     EVT_MENU(ID_MENU_VIEW_TOGGLE_LINE_NUMBERS, MainWindow::OnToggleLineNumbers)
+    EVT_MENU(ID_MENU_VIEW_TOGGLE_WORD_WRAP, MainWindow::OnToggleWordWrap)
     EVT_CLOSE(MainWindow::OnClose)
 wxEND_EVENT_TABLE()
 
@@ -49,7 +50,7 @@ MainWindow::MainWindow()
     textEdit = new wxStyledTextCtrl(this, wxID_ANY);
     textEdit->SetMarginWidth(1, 0);
     textEdit->SetMarginType(1, wxSTC_MARGIN_NUMBER);
-    textEdit->SetWrapMode(wxSTC_WRAP_WORD);
+    textEdit->SetWrapMode(wxSTC_WRAP_NONE);
 
     CreateStatusBar();
     SetStatusText(wxString::Format("Welcome to %s!", EZ2NOTE_APP_NAME));
@@ -153,6 +154,18 @@ void MainWindow::OnToggleLineNumbers(wxCommandEvent &event)
     else
     {
         textEdit->SetMarginWidth(1, 0);
+    }
+}
+
+void MainWindow::OnToggleWordWrap(wxCommandEvent &event)
+{
+    if (event.IsChecked())
+    {
+        textEdit->SetWrapMode(wxSTC_WRAP_WORD);
+    }
+    else
+    {
+        textEdit->SetWrapMode(wxSTC_WRAP_NONE);
     }
 }
 

@@ -17,6 +17,7 @@ MenuBar::MenuBar()
 
     wxMenu *menuView = new wxMenu;
     menuView->AppendCheckItem(ID_MENU_VIEW_TOGGLE_LINE_NUMBERS, "Show line numbers");
+    menuView->AppendCheckItem(ID_MENU_VIEW_TOGGLE_WORD_WRAP, "Word wrap");
 
     wxMenu *menuEdit = new wxMenu;
     menuEdit->Append(ID_MENU_EDIT_FIND_REPLACE, "Find and Replace...\tCtrl+F");
