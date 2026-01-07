@@ -27,6 +27,7 @@ private:
     void OnAbout(wxCommandEvent &event);
     void OnExit(wxCommandEvent &event);
     void OnFindReplace(wxCommandEvent &event);
+    void OnToggleLineNumbers(wxCommandEvent &event);
     void OnClose(wxCloseEvent &event);
 
     void doSaveFile(); // saves the current file

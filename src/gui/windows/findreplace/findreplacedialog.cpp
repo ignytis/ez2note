@@ -1,5 +1,4 @@
 #include "findreplacedialog.hpp"
-#include "wx/log.h"
 
 using namespace Ez2note::Gui::Windows::FindReplace;
 

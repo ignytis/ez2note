@@ -3,6 +3,8 @@
 
 #include <wx/wx.h>
 
+#define ID_MENU_VIEW_TOGGLE_LINE_NUMBERS 101
+
 namespace Ez2note
 {
 namespace Gui

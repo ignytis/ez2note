@@ -1,26 +1,27 @@
 #include <wx/display.h>
-#include <wx/wx.h>
 #include <wx/stc/stc.h>
+#include <wx/wx.h>
 
-#include "mainwindow.hpp"
-#include "menubar.hpp"
 #include "../../../constants.hpp"
 #include "../about/aboutwindow.hpp"
 #include "../findreplace/findreplacedialog.hpp"
+#include "mainwindow.hpp"
+#include "menubar.hpp"
 
 
 using namespace Ez2note::Gui::Windows::About;
-using namespace Ez2note::Gui::Windows::Main;
 using namespace Ez2note::Gui::Windows::FindReplace;
+using namespace Ez2note::Gui::Windows::Main;
 
 wxBEGIN_EVENT_TABLE(MainWindow, wxFrame)
     EVT_MENU(wxID_NEW, MainWindow::OnNew)
     EVT_MENU(wxID_OPEN, MainWindow::OnOpen)
     EVT_MENU(wxID_SAVE, MainWindow::OnSave)
     EVT_MENU(wxID_SAVEAS, MainWindow::OnSaveAs)
-    EVT_MENU(ID_FIND_REPLACE, MainWindow::OnFindReplace)
-    EVT_MENU(wxID_EXIT, MainWindow::OnExit)
     EVT_MENU(wxID_ABOUT, MainWindow::OnAbout)
+    EVT_MENU(wxID_EXIT, MainWindow::OnExit)
+    EVT_MENU(ID_MENU_EDIT_FIND_REPLACE, MainWindow::OnFindReplace)
+    EVT_MENU(ID_MENU_VIEW_TOGGLE_LINE_NUMBERS, MainWindow::OnToggleLineNumbers)
     EVT_CLOSE(MainWindow::OnClose)
 wxEND_EVENT_TABLE()
 
@@ -46,11 +47,9 @@ MainWindow::MainWindow()
     SetMenuBar(new MenuBar);
 
     textEdit = new wxStyledTextCtrl(this, wxID_ANY);
-    textEdit->SetMarginCount(0);
-    // TODO: consider these settings for the future
-    // textEdit->SetMarginWidth(1, 50);
-    // textEdit->SetMarginType(1, wxSTC_MARGIN_NUMBER);
-    // textEdit->SetWrapMode(wxSTC_WRAP_WORD);
+    textEdit->SetMarginWidth(1, 0);
+    textEdit->SetMarginType(1, wxSTC_MARGIN_NUMBER);
+    textEdit->SetWrapMode(wxSTC_WRAP_WORD);
 
     CreateStatusBar();
     SetStatusText(wxString::Format("Welcome to %s!", EZ2NOTE_APP_NAME));
@@ -143,6 +142,18 @@ void MainWindow::OnFindReplace(wxCommandEvent &event)
 {
     FindReplaceDialog *findReplace = new FindReplaceDialog(this, textEdit);
     findReplace->Show();
+}
+
+void MainWindow::OnToggleLineNumbers(wxCommandEvent &event)
+{
+    if (event.IsChecked())
+    {
+        textEdit->SetMarginWidth(1, 50);
+    }
+    else
+    {
+        textEdit->SetMarginWidth(1, 0);
+    }
 }
 
 void MainWindow::OnExit(wxCommandEvent &event)

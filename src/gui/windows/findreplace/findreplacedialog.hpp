@@ -4,7 +4,7 @@
 #include <wx/wx.h>
 #include <wx/stc/stc.h>
 
-#define ID_FIND_REPLACE 100
+#define ID_MENU_EDIT_FIND_REPLACE 100
 
 namespace Ez2note {
 namespace Gui {
