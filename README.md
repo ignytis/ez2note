@@ -28,11 +28,19 @@ You might end up corrupting some document by saving it before you really want to
 ### Prerequisites
 
 - C++ compiler
-- Qt Framework v6
+- wxWidgets development library
+- CMake >= 3.16
 
 ## Linux
 
+### Initialization of the project
+
 ```bash
-cmake .
+cmake -DCMAKE_BUILD_TYPE=DEBUG .
+```
+
+### Building
+
+```bash
 make -j"$(nproc)"
 ```
