@@ -17,7 +17,10 @@ MenuBar::MenuBar(Ez2note::Config &config) : config(config)
     menuFile->Append(wxID_EXIT);
 
     wxMenu *menuEdit = new wxMenu;
-    menuEdit->Append(ID_MENU_EDIT_FIND_REPLACE, "Find and Replace...\tCtrl+F");
+    menuEdit->Append(wxID_UNDO);
+    menuEdit->Append(wxID_REDO);
+    menuEdit->AppendSeparator();
+    menuEdit->Append(ID_MENU_EDIT_FIND_REPLACE, "Find and Replace...\tCtrl+H");
 
     wxMenu *menuView = new wxMenu;
     menuView->AppendCheckItem(ID_MENU_VIEW_TOGGLE_LINE_NUMBERS, "Show line numbers");

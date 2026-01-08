@@ -22,15 +22,22 @@ public:
     void OpenFile(const wxString &filePath);
 
 private:
+    // Menu -> File
     void OnNew(wxCommandEvent &event);
     void OnOpen(wxCommandEvent &event);
     void OnSave(wxCommandEvent &event);
     void OnSaveAs(wxCommandEvent &event);
-    void OnAbout(wxCommandEvent &event);
     void OnExit(wxCommandEvent &event);
+    // Menu -> Edit
+    void OnUndo(wxCommandEvent &event);
+    void OnRedo(wxCommandEvent &event);
     void OnFindReplace(wxCommandEvent &event);
+    // Menu -> View
     void OnToggleLineNumbers(wxCommandEvent &event);
     void OnToggleWordWrap(wxCommandEvent &event);
+    // Menu -> Help
+    void OnAbout(wxCommandEvent &event);
+
     void OnClose(wxCloseEvent &event);
 
     void doSaveFile();                  // saves the current file

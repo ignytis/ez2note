@@ -15,15 +15,21 @@ using namespace Ez2note::Gui::Windows::FindReplace;
 using namespace Ez2note::Gui::Windows::Main;
 
 wxBEGIN_EVENT_TABLE(MainWindow, wxFrame)
+    // Menu -> File
     EVT_MENU(wxID_NEW, MainWindow::OnNew)
     EVT_MENU(wxID_OPEN, MainWindow::OnOpen)
     EVT_MENU(wxID_SAVE, MainWindow::OnSave)
     EVT_MENU(wxID_SAVEAS, MainWindow::OnSaveAs)
-    EVT_MENU(wxID_ABOUT, MainWindow::OnAbout)
     EVT_MENU(wxID_EXIT, MainWindow::OnExit)
+    // Menu -> Edit
     EVT_MENU(ID_MENU_EDIT_FIND_REPLACE, MainWindow::OnFindReplace)
+    EVT_MENU(wxID_UNDO, MainWindow::OnUndo)
+    EVT_MENU(wxID_REDO, MainWindow::OnRedo)
+    // Menu -> View
     EVT_MENU(ID_MENU_VIEW_TOGGLE_LINE_NUMBERS, MainWindow::OnToggleLineNumbers)
     EVT_MENU(ID_MENU_VIEW_TOGGLE_WORD_WRAP, MainWindow::OnToggleWordWrap)
+    // Menu -> Help
+    EVT_MENU(wxID_ABOUT, MainWindow::OnAbout)
     EVT_CLOSE(MainWindow::OnClose)
 wxEND_EVENT_TABLE()
 
@@ -138,6 +144,16 @@ void MainWindow::OnAbout(wxCommandEvent &event)
 {
     AboutWindow *about = new AboutWindow(this);
     about->ShowWindowModal();
+}
+
+void MainWindow::OnUndo(wxCommandEvent &event)
+{
+    textEdit->Undo();
+}
+
+void MainWindow::OnRedo(wxCommandEvent &event)
+{
+    textEdit->Redo();
 }
 
 void MainWindow::OnFindReplace(wxCommandEvent &event)
