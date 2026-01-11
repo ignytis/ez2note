@@ -9,7 +9,6 @@
 #include "../findreplace/findreplacedialog.hpp"
 #include "menubar.hpp"
 
-
 using namespace Ez2note::Gui::Windows::About;
 using namespace Ez2note::Gui::Windows::FindReplace;
 using namespace Ez2note::Gui::Windows::Main;
@@ -33,177 +32,157 @@ wxBEGIN_EVENT_TABLE(MainWindow, wxFrame)
     EVT_CLOSE(MainWindow::OnClose)
 wxEND_EVENT_TABLE()
 
-
 /**
  * Shows a dialog asking the user if they want to save their changes.
  * @return The user's choice (wxID_YES, wxID_NO, or wxID_CANCEL).
  */
-int showDocumentModifiedDialog()
-{
-    return wxMessageBox("The document has been modified.\nDo you want to save your changes?",
-                         "ez2note", wxYES_NO | wxCANCEL);
+int showDocumentModifiedDialog() {
+	return wxMessageBox(
+			"The document has been modified.\nDo you want to save your changes?",
+			"ez2note", wxYES_NO | wxCANCEL);
 }
-
 
 MainWindow::MainWindow(Ez2note::Config &config)
-    : wxFrame(NULL, wxID_ANY, EZ2NOTE_APP_NAME), config(config)
-{
-    // By default, set the window size to 1/2 of the screen size
-    wxDisplay display;
-    this->SetSize(display.GetClientArea().GetSize() / 2);
+		: wxFrame(NULL, wxID_ANY, EZ2NOTE_APP_NAME), config(config) {
 
-    SetMenuBar(new MenuBar(config));
+#ifdef WIN32
+	// Set icons (Windows)
+	wxIconBundle icons;
+	icons.AddIcon(wxIcon("IDI_APPICON", wxBITMAP_TYPE_ICO_RESOURCE));
+	SetIcons(icons);
+#endif
 
-    textEdit = new wxStyledTextCtrl(this, wxID_ANY);
-    textEdit->SetMarginWidth(1, config.getBool("showLineNumbers") ? 50 : 0);
-    textEdit->SetMarginType(1, wxSTC_MARGIN_NUMBER);
-    textEdit->SetWrapMode(config.getBool("wordWrap") ? wxSTC_WRAP_WORD : wxSTC_WRAP_NONE);
+	// By default, set the window size to 1/2 of the screen size
+	wxDisplay display;
+	this->SetSize(display.GetClientArea().GetSize() / 2);
 
-    CreateStatusBar();
-    SetStatusText(wxString::Format("Welcome to %s!", EZ2NOTE_APP_NAME));
+	SetMenuBar(new MenuBar(config));
+
+	textEdit = new wxStyledTextCtrl(this, wxID_ANY);
+	textEdit->SetMarginWidth(1, config.getBool("showLineNumbers") ? 50 : 0);
+	textEdit->SetMarginType(1, wxSTC_MARGIN_NUMBER);
+	textEdit->SetWrapMode(config.getBool("wordWrap") ? wxSTC_WRAP_WORD : wxSTC_WRAP_NONE);
+
+	CreateStatusBar();
+	SetStatusText(wxString::Format("Welcome to %s!", EZ2NOTE_APP_NAME));
 }
 
-void MainWindow::OnNew(wxCommandEvent &event)
-{
-    if (textEdit->IsModified()) {
-      switch (showDocumentModifiedDialog())  {
-          case wxYES:
-              OnSave(event);
-              break;
-          case wxCANCEL:
-              return;
-              break;
-      }
-    }
+void MainWindow::OnNew(wxCommandEvent &event) {
+	if (textEdit->IsModified()) {
+		switch (showDocumentModifiedDialog()) {
+		case wxYES:
+			OnSave(event);
+			break;
+		case wxCANCEL:
+			return;
+			break;
+		}
+	}
 
-    textEdit->ClearAll();
-    currentFile.Clear();
+	textEdit->ClearAll();
+	currentFile.Clear();
 }
 
-void MainWindow::OnOpen(wxCommandEvent &event)
-{
-    if (textEdit->IsModified()) {
-        switch (showDocumentModifiedDialog())  {
-            case wxYES:
-                OnSave(event);
-                break;
-            case wxCANCEL:
-                return;
-                break;
-        }
-    }
+void MainWindow::OnOpen(wxCommandEvent &event) {
+	if (textEdit->IsModified()) {
+		switch (showDocumentModifiedDialog()) {
+		case wxYES:
+			OnSave(event);
+			break;
+		case wxCANCEL:
+			return;
+			break;
+		}
+	}
 
-    wxFileDialog openFileDialog(this, "Open file", "", "",
-                                "All files|*", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+	wxFileDialog openFileDialog(this, "Open file", "", "",
+        "All files|*", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 
-    if (openFileDialog.ShowModal() == wxID_CANCEL)
-        return;
+	if (openFileDialog.ShowModal() == wxID_CANCEL)
+		return;
 
-    OpenFile(openFileDialog.GetPath());
+	OpenFile(openFileDialog.GetPath());
 }
 
-void MainWindow::OpenFile(const wxString &filePath)
-{
-    if (textEdit->LoadFile(filePath)) {
-        currentFile = filePath;
-    }
+void MainWindow::OpenFile(const wxString &filePath) {
+	if (textEdit->LoadFile(filePath)) {
+		currentFile = filePath;
+	}
 }
 
-void MainWindow::doSaveFile()
-{
-    textEdit->SaveFile(currentFile);
-    SetStatusText(wxString::Format("File '%s' saved",currentFile));
+void MainWindow::doSaveFile() {
+	textEdit->SaveFile(currentFile);
+	SetStatusText(wxString::Format("File '%s' saved", currentFile));
 }
 
-void MainWindow::doSaveFile(wxString filePath)
-{
-    currentFile = filePath;
-    doSaveFile();
+void MainWindow::doSaveFile(wxString filePath) {
+	currentFile = filePath;
+	doSaveFile();
 }
 
-void MainWindow::OnSave(wxCommandEvent &event)
-{
-    if (currentFile.IsEmpty()) {
-        OnSaveAs(event);
-    } else {
-      this->doSaveFile();
-    }
+void MainWindow::OnSave(wxCommandEvent &event) {
+	if (currentFile.IsEmpty()) {
+		OnSaveAs(event);
+	} else {
+		this->doSaveFile();
+	}
 }
 
-void MainWindow::OnSaveAs(wxCommandEvent &event)
-{
-    wxFileDialog saveFileDialog(this, "Save file", "", "",
-                                "Text files (*.txt)|*.txt", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+void MainWindow::OnSaveAs(wxCommandEvent &event) {
+	wxFileDialog saveFileDialog(this, "Save file", "", "",
+        "Text files (*.txt)|*.txt", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
-    if (saveFileDialog.ShowModal() == wxID_CANCEL)
-        return;
-    this->doSaveFile(saveFileDialog.GetPath());
+	if (saveFileDialog.ShowModal() == wxID_CANCEL)
+		return;
+	this->doSaveFile(saveFileDialog.GetPath());
 }
 
-void MainWindow::OnAbout(wxCommandEvent &event)
-{
-    AboutWindow *about = new AboutWindow(this);
-    about->ShowWindowModal();
+void MainWindow::OnAbout(wxCommandEvent &event) {
+	AboutWindow *about = new AboutWindow(this);
+	about->ShowWindowModal();
 }
 
-void MainWindow::OnUndo(wxCommandEvent &event)
-{
-    textEdit->Undo();
+void MainWindow::OnUndo(wxCommandEvent &event) { textEdit->Undo(); }
+
+void MainWindow::OnRedo(wxCommandEvent &event) { textEdit->Redo(); }
+
+void MainWindow::OnFindReplace(wxCommandEvent &event) {
+	FindReplaceDialog *findReplace = new FindReplaceDialog(this, textEdit);
+	findReplace->Show();
 }
 
-void MainWindow::OnRedo(wxCommandEvent &event)
-{
-    textEdit->Redo();
+void MainWindow::OnToggleLineNumbers(wxCommandEvent &event) {
+	if (event.IsChecked()) {
+		textEdit->SetMarginWidth(1, 50);
+	} else {
+		textEdit->SetMarginWidth(1, 0);
+	}
 }
 
-void MainWindow::OnFindReplace(wxCommandEvent &event)
-{
-    FindReplaceDialog *findReplace = new FindReplaceDialog(this, textEdit);
-    findReplace->Show();
+void MainWindow::OnToggleWordWrap(wxCommandEvent &event) {
+	if (event.IsChecked()) {
+		textEdit->SetWrapMode(wxSTC_WRAP_WORD);
+	} else {
+		textEdit->SetWrapMode(wxSTC_WRAP_NONE);
+	}
 }
 
-void MainWindow::OnToggleLineNumbers(wxCommandEvent &event)
-{
-    if (event.IsChecked())
-    {
-        textEdit->SetMarginWidth(1, 50);
-    }
-    else
-    {
-        textEdit->SetMarginWidth(1, 0);
-    }
+void MainWindow::OnExit(wxCommandEvent &event) {
+	Close(true);
 }
 
-void MainWindow::OnToggleWordWrap(wxCommandEvent &event)
-{
-    if (event.IsChecked())
-    {
-        textEdit->SetWrapMode(wxSTC_WRAP_WORD);
-    }
-    else
-    {
-        textEdit->SetWrapMode(wxSTC_WRAP_NONE);
-    }
-}
+void MainWindow::OnClose(wxCloseEvent &event) {
+	if (textEdit->IsModified()) {
+		wxCommandEvent saveEvent(wxEVT_COMMAND_MENU_SELECTED, wxID_SAVE);
+		switch (showDocumentModifiedDialog()) {
+		case wxYES:
+			OnSave(saveEvent);
+			break;
+		case wxCANCEL:
+			return;
+			break;
+		}
+	}
 
-void MainWindow::OnExit(wxCommandEvent &event)
-{
-    Close(true);
-}
-
-void MainWindow::OnClose(wxCloseEvent &event)
-{
-    if (textEdit->IsModified()) {
-        wxCommandEvent saveEvent(wxEVT_COMMAND_MENU_SELECTED, wxID_SAVE);
-        switch (showDocumentModifiedDialog()) {
-            case wxYES:
-                OnSave(saveEvent);
-                break;
-            case wxCANCEL:
-                return;
-                break;
-        }
-    }
-
-    Destroy();
+	Destroy();
 }
