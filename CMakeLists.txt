@@ -11,7 +11,7 @@ include(FetchContent)
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz)
 FetchContent_MakeAvailable(json)
 
-find_package(wxWidgets COMPONENTS core stc REQUIRED)
+find_package(wxWidgets COMPONENTS stc core base REQUIRED)
 
 include(${wxWidgets_USE_FILE})
 
@@ -24,6 +24,10 @@ add_executable(ez2note
     src/gui/windows/main/menubar.cpp
     src/main.cpp
 )
+
+if(WIN32)
+    target_sources(ez2note PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/resource.rc)
+endif()
 
 target_include_directories(ez2note PRIVATE src)
 target_link_libraries(ez2note PRIVATE wxWidgets::wxWidgets nlohmann_json::nlohmann_json)

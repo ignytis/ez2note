@@ -43,7 +43,6 @@ private:
     void doSaveFile();                  // saves the current file
     void doSaveFile(wxString filePath); // saves the specified file and sets it as current
 
-    // TODO: make it even more simple by default. But this widget might be useful in advanced mode
     wxStyledTextCtrl *textEdit;
     wxString currentFile;
     Ez2note::Config &config;
