@@ -26,6 +26,11 @@
 - Namespaces are used to organize code into logical units. The structure of namespaces should
   reflect the project's directory structure, e.g. `src/gui/windows/main` directory -> `Ez2note::Gui::Windows::Main`
 
+## Validation of result
+
+- Use multi-threaded building when running `make`
+- In Unix environments use `./cmd.sh compile` to build the project
+
 ## Project structure
 
 - All `*.cpp` and `*.hpp` source files are located in `src` directory
