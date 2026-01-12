@@ -39,7 +39,7 @@ wxEND_EVENT_TABLE()
 int showDocumentModifiedDialog() {
 	return wxMessageBox(
 			"The document has been modified.\nDo you want to save your changes?",
-			"ez2note", wxYES_NO | wxCANCEL);
+			EZ2NOTE_APP_NAME, wxYES_NO | wxCANCEL);
 }
 
 MainWindow::MainWindow(Ez2note::Config &config)
