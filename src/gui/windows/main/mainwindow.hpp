@@ -6,53 +6,49 @@
 
 #include "../../../config.hpp"
 
-namespace Ez2note
-{
-namespace Gui
-{
-namespace Windows
-{
-namespace Main
-{
+namespace Ez2note {
+namespace Gui {
+namespace Windows {
+namespace Main {
 
-class MainWindow : public wxFrame
-{
-public:
-    MainWindow(Ez2note::Config &config);
-    void OpenFile(const wxString &filePath);
+class MainWindow : public wxFrame {
+   public:
+    MainWindow(Ez2note::Config& config);
+    void OpenFile(const wxString& filePath);
 
-private:
+   private:
     // Menu -> File
-    void OnNew(wxCommandEvent &event);
-    void OnOpen(wxCommandEvent &event);
-    void OnSave(wxCommandEvent &event);
-    void OnSaveAs(wxCommandEvent &event);
-    void OnExit(wxCommandEvent &event);
+    void OnNew(wxCommandEvent& event);
+    void OnOpen(wxCommandEvent& event);
+    void OnSave(wxCommandEvent& event);
+    void OnSaveAs(wxCommandEvent& event);
+    void OnExit(wxCommandEvent& event);
     // Menu -> Edit
-    void OnUndo(wxCommandEvent &event);
-    void OnRedo(wxCommandEvent &event);
-    void OnFindReplace(wxCommandEvent &event);
+    void OnUndo(wxCommandEvent& event);
+    void OnRedo(wxCommandEvent& event);
+    void OnFindReplace(wxCommandEvent& event);
     // Menu -> View
-    void OnToggleLineNumbers(wxCommandEvent &event);
-    void OnToggleWordWrap(wxCommandEvent &event);
+    void OnToggleLineNumbers(wxCommandEvent& event);
+    void OnToggleWordWrap(wxCommandEvent& event);
     // Menu -> Help
-    void OnAbout(wxCommandEvent &event);
+    void OnAbout(wxCommandEvent& event);
 
-    void OnClose(wxCloseEvent &event);
+    void OnClose(wxCloseEvent& event);
 
-    void doSaveFile();                  // saves the current file
-    void doSaveFile(wxString filePath); // saves the specified file and sets it as current
+    void doSaveFile();  // saves the current file
+    void doSaveFile(
+        wxString filePath);  // saves the specified file and sets it as current
 
-    wxStyledTextCtrl *textEdit;
+    wxStyledTextCtrl* textEdit;
     wxString currentFile;
-    Ez2note::Config &config;
+    Ez2note::Config& config;
 
     wxDECLARE_EVENT_TABLE();
 };
 
-} // namespace Main
-} // namespace Windows
-} // namespace Gui
-} // namespace Ez2note
+}  // namespace Main
+}  // namespace Windows
+}  // namespace Gui
+}  // namespace Ez2note
 
-#endif // GUI_WINDOWS_MAIN_MAINWINDOW_HPP
+#endif  // GUI_WINDOWS_MAIN_MAINWINDOW_HPP

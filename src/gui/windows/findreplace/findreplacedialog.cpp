@@ -11,36 +11,43 @@ enum {
     ID_REPLACE_ALL_BUTTON
 };
 
-wxBEGIN_EVENT_TABLE(FindReplaceDialog, wxDialog)
-    EVT_BUTTON(ID_FINDNEXT_BUTTON, FindReplaceDialog::OnFindNext)
+wxBEGIN_EVENT_TABLE(FindReplaceDialog,
+                    wxDialog) EVT_BUTTON(ID_FINDNEXT_BUTTON,
+                                         FindReplaceDialog::OnFindNext)
     EVT_BUTTON(ID_FINDPREV_BUTTON, FindReplaceDialog::OnFindPrev)
-    EVT_BUTTON(ID_REPLACE_BUTTON, FindReplaceDialog::OnReplace)
-    EVT_BUTTON(ID_REPLACE_ALL_BUTTON, FindReplaceDialog::OnReplaceAll)
-wxEND_EVENT_TABLE()
+        EVT_BUTTON(ID_REPLACE_BUTTON, FindReplaceDialog::OnReplace)
+            EVT_BUTTON(ID_REPLACE_ALL_BUTTON,
+                       FindReplaceDialog::OnReplaceAll) wxEND_EVENT_TABLE()
 
-FindReplaceDialog::FindReplaceDialog(wxWindow *parent, wxStyledTextCtrl *textEdit)
+                FindReplaceDialog::FindReplaceDialog(wxWindow* parent,
+                                                     wxStyledTextCtrl* textEdit)
     : wxDialog(parent, wxID_ANY, "Find and Replace"), textEdit(textEdit) {
+    wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
-    wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
-
-    wxFlexGridSizer *gridSizer = new wxFlexGridSizer(2, 2, 5, 5);
+    wxFlexGridSizer* gridSizer = new wxFlexGridSizer(2, 2, 5, 5);
     gridSizer->AddGrowableCol(1);
 
-    gridSizer->Add(new wxStaticText(this, wxID_ANY, "Find:"), 0, wxALIGN_CENTER_VERTICAL);
+    gridSizer->Add(new wxStaticText(this, wxID_ANY, "Find:"), 0,
+                   wxALIGN_CENTER_VERTICAL);
     findText = new wxTextCtrl(this, ID_FIND_TEXT);
     gridSizer->Add(findText, 1, wxEXPAND);
 
-    gridSizer->Add(new wxStaticText(this, wxID_ANY, "Replace with:"), 0, wxALIGN_CENTER_VERTICAL);
+    gridSizer->Add(new wxStaticText(this, wxID_ANY, "Replace with:"), 0,
+                   wxALIGN_CENTER_VERTICAL);
     replaceText = new wxTextCtrl(this, ID_REPLACE_TEXT);
     gridSizer->Add(replaceText, 1, wxEXPAND);
 
     sizer->Add(gridSizer, 1, wxEXPAND | wxALL, 10);
 
-    wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
-    buttonSizer->Add(new wxButton(this, ID_FINDPREV_BUTTON, "Find previous"), 0, wxRIGHT, 5);
-    buttonSizer->Add(new wxButton(this, ID_FINDNEXT_BUTTON, "Find next"), 0, wxRIGHT, 5);
-    buttonSizer->Add(new wxButton(this, ID_REPLACE_BUTTON, "Replace"), 0, wxRIGHT, 5);
-    buttonSizer->Add(new wxButton(this, ID_REPLACE_ALL_BUTTON, "Replace All"), 0, wxRIGHT, 5);
+    wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
+    buttonSizer->Add(new wxButton(this, ID_FINDPREV_BUTTON, "Find previous"), 0,
+                     wxRIGHT, 5);
+    buttonSizer->Add(new wxButton(this, ID_FINDNEXT_BUTTON, "Find next"), 0,
+                     wxRIGHT, 5);
+    buttonSizer->Add(new wxButton(this, ID_REPLACE_BUTTON, "Replace"), 0,
+                     wxRIGHT, 5);
+    buttonSizer->Add(new wxButton(this, ID_REPLACE_ALL_BUTTON, "Replace All"),
+                     0, wxRIGHT, 5);
     buttonSizer->Add(new wxButton(this, wxID_CANCEL, "Cancel"), 0);
 
     sizer->Add(buttonSizer, 0, wxALIGN_RIGHT | wxRIGHT | wxBOTTOM, 10);
@@ -49,10 +56,9 @@ FindReplaceDialog::FindReplaceDialog(wxWindow *parent, wxStyledTextCtrl *textEdi
 
     Connect(wxID_CLOSE, wxEVT_COMMAND_BUTTON_CLICKED,
             wxCommandEventHandler(FindReplaceDialog::OnCancel));
-
 }
 
-void FindReplaceDialog::OnFindNext(wxCommandEvent &event) {
+void FindReplaceDialog::OnFindNext(wxCommandEvent& event) {
     wxString searchTerm = findText->GetValue();
     if (searchTerm.IsEmpty()) {
         return;
@@ -70,7 +76,7 @@ void FindReplaceDialog::OnFindNext(wxCommandEvent &event) {
     }
 }
 
-void FindReplaceDialog::OnFindPrev(wxCommandEvent &event) {
+void FindReplaceDialog::OnFindPrev(wxCommandEvent& event) {
     wxString searchTerm = findText->GetValue();
     if (searchTerm.IsEmpty()) {
         return;
@@ -88,7 +94,7 @@ void FindReplaceDialog::OnFindPrev(wxCommandEvent &event) {
     }
 }
 
-void FindReplaceDialog::OnReplace(wxCommandEvent &event) {
+void FindReplaceDialog::OnReplace(wxCommandEvent& event) {
     wxString searchTerm = findText->GetValue();
     wxString replaceTerm = replaceText->GetValue();
 
@@ -103,7 +109,7 @@ void FindReplaceDialog::OnReplace(wxCommandEvent &event) {
     OnFindNext(event);
 }
 
-void FindReplaceDialog::OnReplaceAll(wxCommandEvent &event) {
+void FindReplaceDialog::OnReplaceAll(wxCommandEvent& event) {
     wxString searchTerm = findText->GetValue();
     wxString replaceTerm = replaceText->GetValue();
 
@@ -120,9 +126,8 @@ void FindReplaceDialog::OnReplaceAll(wxCommandEvent &event) {
         count++;
     }
 
-    wxMessageBox(wxString::Format("Replaced %d occurrences.", count), "Replace All", wxOK | wxICON_INFORMATION);
+    wxMessageBox(wxString::Format("Replaced %d occurrences.", count),
+                 "Replace All", wxOK | wxICON_INFORMATION);
 }
 
-void FindReplaceDialog::OnCancel(wxCommandEvent &event) {
-    Close();
-}
+void FindReplaceDialog::OnCancel(wxCommandEvent& event) { Close(); }

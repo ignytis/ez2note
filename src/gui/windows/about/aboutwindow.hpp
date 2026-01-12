@@ -3,26 +3,20 @@
 
 #include <wx/wx.h>
 
-namespace Ez2note
-{
-namespace Gui
-{
-namespace Windows
-{
-namespace About
-{
+namespace Ez2note {
+namespace Gui {
+namespace Windows {
+namespace About {
 
-class AboutWindow : public wxDialog
-{
-public:
-    AboutWindow(wxWindow *parent);
+class AboutWindow : public wxDialog {
+   public:
+    AboutWindow(wxWindow* parent);
     void OnClose(wxCommandEvent& event);
 };
 
-}
-}
-}
-}
+}  // namespace About
+}  // namespace Windows
+}  // namespace Gui
+}  // namespace Ez2note
 
-
-#endif // GUI_WINDOWS_ABOUT_ABOUT_HPP
+#endif  // GUI_WINDOWS_ABOUT_ABOUT_HPP

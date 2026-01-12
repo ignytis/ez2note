@@ -5,19 +5,17 @@
 
 #include "config.hpp"
 
-namespace Ez2note
-{
+namespace Ez2note {
 
-class App : public wxApp
-{
-public:
+class App : public wxApp {
+   public:
     virtual bool OnInit();
-    Config &getConfig();
+    Config& getConfig();
 
-private:
+   private:
     Config config;
 };
 
-}
+}  // namespace Ez2note
 
-#endif // APP_HPP
+#endif  // APP_HPP

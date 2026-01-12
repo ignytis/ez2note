@@ -6,19 +6,17 @@
 
 using namespace std;
 
-namespace Ez2note
-{
+namespace Ez2note {
 
-class Config
-{
-public:
+class Config {
+   public:
     Config();
-    bool getBool(const string &key);
+    bool getBool(const string& key);
 
-private:
+   private:
     map<string, string> kv;
 };
 
-}
+}  // namespace Ez2note
 
-#endif // CONFIG_HPP
+#endif  // CONFIG_HPP

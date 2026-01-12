@@ -19,6 +19,8 @@ elif [ "$COMMAND" = "run" ]; then
 elif [ "$COMMAND" = "compile-run" ]; then
     compile
     run
+elif [ "$COMMAND" = "format" ]; then
+    find src \( -name '*.cpp' -o -name '*.hpp' \)  | xargs -I % clang-format -i % -style=file
 else
     echo "Usage: ./cmd.sh [compile|run|compile-run]"
 fi
