@@ -25,9 +25,9 @@ MenuBar::MenuBar(Ez2note::Config& config) : config(config) {
     menuView->AppendCheckItem(ID_MENU_VIEW_TOGGLE_LINE_NUMBERS,
                               "Show line numbers");
     menuView->Check(ID_MENU_VIEW_TOGGLE_LINE_NUMBERS,
-                    config.getBool("showLineNumbers"));
+                    config.getBool("editor.showLineNumbers"));
     menuView->AppendCheckItem(ID_MENU_VIEW_TOGGLE_WORD_WRAP, "Word wrap");
-    menuView->Check(ID_MENU_VIEW_TOGGLE_WORD_WRAP, config.getBool("wordWrap"));
+    menuView->Check(ID_MENU_VIEW_TOGGLE_WORD_WRAP, config.getBool("editor.wordWrap"));
 
     wxMenu* menuHelp = new wxMenu;
     menuHelp->Append(wxID_ABOUT);

@@ -36,8 +36,8 @@ string jsonBoolToString(json b) { return !b.is_null() && b ? "true" : "false"; }
  */
 map<string, string> getDefaultKv() {
     map<string, string> kv = {
-        {"showLineNumbers", "false"},
-        {"wordWrap", "false"},
+        {"editor.showLineNumbers", "false"},
+        {"editor.wordWrap", "false"},
     };
     return kv;
 }
@@ -53,8 +53,8 @@ Config::Config() : kv(getDefaultKv()) {
         configFile.close();
     }
 
-    kv["showLineNumbers"] = jsonBoolToString(configJson["showLineNumbers"]);
-    kv["wordWrap"] = jsonBoolToString(configJson["wordWrap"]);
+    kv["editor.showLineNumbers"] = jsonBoolToString(configJson["editor.showLineNumbers"]);
+    kv["editor.wordWrap"] = jsonBoolToString(configJson["editor.wordWrap"]);
 }
 
 bool Config::getBool(const string& key) {

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Ez2Note
+Comment=A simple text editor
+GenericName=Text Editor
+Exec=ez2note %F
+Icon=ez2note
+Type=Application
+Categories=Utility;TextEditor;
+Keywords=ez2note;

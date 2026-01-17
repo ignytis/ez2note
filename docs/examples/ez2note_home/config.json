@@ -1,4 +1,4 @@
 {
-  "showLineNumbers": true,
-  "wordWrap": true
+  "editor.showLineNumbers": true,
+  "editor.wordWrap": true
 }
