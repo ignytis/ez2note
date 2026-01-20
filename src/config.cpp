@@ -27,15 +27,15 @@ string getAppHomeDir() {
     return appHomeDir;
 }
 
-string jsonBoolToString(json b) { return !b.is_null() && b ? "true" : "false"; }
+string jsonBoolToString(json b) { return !b.is_null() && b ? CONFIG_VALUE_BOOL_TRUE : CONFIG_VALUE_BOOL_FALSE; }
 
 /**
  * Returns default KV map for config
  */
 map<string, string> getDefaultKv() {
     map<string, string> kv = {
-        {"editor.showLineNumbers", "false"},
-        {"editor.wordWrap", "false"},
+        {CONFIG_KEY_EDITOR_SHOW_LINE_NUMBERS, CONFIG_VALUE_BOOL_FALSE},
+        {CONFIG_KEY_EDITOR_WORD_WRAP, CONFIG_VALUE_BOOL_FALSE},
     };
     return kv;
 }
@@ -51,8 +51,8 @@ Config::Config() : kv(getDefaultKv()) {
         configFile.close();
     }
 
-    kv["editor.showLineNumbers"] = jsonBoolToString(configJson["editor.showLineNumbers"]);
-    kv["editor.wordWrap"] = jsonBoolToString(configJson["editor.wordWrap"]);
+    kv[CONFIG_KEY_EDITOR_SHOW_LINE_NUMBERS] = jsonBoolToString(configJson[CONFIG_KEY_EDITOR_SHOW_LINE_NUMBERS]);
+    kv[CONFIG_KEY_EDITOR_WORD_WRAP] = jsonBoolToString(configJson[CONFIG_KEY_EDITOR_WORD_WRAP]);
 }
 
 bool Config::getBool(const string& key) {
@@ -61,5 +61,5 @@ bool Config::getBool(const string& key) {
     }
     string val = kv.at(key);
     transform(val.begin(), val.end(), val.begin(), ::tolower);
-    return val == "true";
+    return val == CONFIG_VALUE_BOOL_TRUE;
 }
