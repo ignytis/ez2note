@@ -1,6 +1,7 @@
 #include "config.hpp"
 
 #include <sys/stat.h>
+#include <wx/debug.h>
 #include <wx/stdpaths.h>
 
 #include <algorithm>
@@ -21,10 +22,7 @@ string getAppHomeDir() {
     if (cAppHomeDir) {
         appHomeDir = string(cAppHomeDir);
     } else {
-        wxString wxAppHomeDir =
-            wxStandardPaths::wxStandardPaths::Get().GetUserDataDir() +
-            "/.ez2note";
-        appHomeDir = wxAppHomeDir.ToStdString();
+        appHomeDir = wxStandardPaths::wxStandardPaths::Get().GetUserDataDir().ToStdString();
     }
     return appHomeDir;
 }

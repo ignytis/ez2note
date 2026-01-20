@@ -6,7 +6,7 @@ RPM expects the source archive to exist in the `SOURCES` directory.
 Create it using the command below (mind the app version):
 
 ```bash
-# Projec ROOT dir
+# Project ROOT dir
 tar \
     --transform 's,^,ez2note-0.0.1/,' \
     -cvf dist/rpm/SOURCES/ez2note-0.0.1.tar.gz \
@@ -26,7 +26,8 @@ The result RPM package should be available in the `RPMS` directory.
 Install it:
 
 ```bash
-sudo rpm -Uvh ./dist/rpm/RPMS/x86_64/ez2note-0.0.1-1.fc43.x86_64.rp
+# Project ROOT dir
+sudo rpm -Uvh ./dist/rpm/RPMS/x86_64/ez2note-0.0.1-1.fc43.x86_64.rpm
 ```
 Now the application could be found in GNOME applications menu.
 
