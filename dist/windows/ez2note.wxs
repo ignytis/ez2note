@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" 
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
      xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
 
-  <Package Name="Ez2note" Manufacturer="Ignytis" Version="0.0.1" UpgradeCode="f8ce9e53-d994-4b76-bdde-3ff42f3a9866">
-    
+  <Package Name="Ez2note" Manufacturer="Ignytis" Version="1.0.0" UpgradeCode="f8ce9e53-d994-4b76-bdde-3ff42f3a9866">
+
     <Icon Id="icon.ico" SourceFile="..\..\assets\icon\90_icon.ico"/>
     <Property Id="ARPPRODUCTICON" Value="icon.ico" />
 
@@ -14,10 +14,14 @@
       <Directory Id="INSTALLFOLDER" Name="Ez2note" />
     </StandardDirectory>
 
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ApplicationProgramsFolder" Name="Ez2note" />
+    </StandardDirectory>
+
     <ComponentGroup Id="MainComponents" Directory="INSTALLFOLDER">
         <!-- Could these paths be auto-discovered somehow? -->
         <Component>
-            <File Source="..\..\out\build\x64-Release\build\Release\ez2note.exe" />
+            <File Id="ez2note.exe" Source="..\..\out\build\x64-Release\build\Release\ez2note.exe" KeyPath="yes" />
         </Component>
         <Component>
             <File Source="..\..\out\build\x64-Release\build\Release\jpeg62.dll" />
@@ -60,8 +64,39 @@
         </Component>
     </ComponentGroup>
 
+    <DirectoryRef Id="ApplicationProgramsFolder">
+        <Component Id="ApplicationShortcut" Guid="1c6df137-4348-4176-8341-b4a7134d195a">
+            <Shortcut Id="ApplicationStartMenuShortcut"
+                Name="Ez2note"
+                Description="A simple note taking app"
+                Target="[#ez2note.exe]"
+                WorkingDirectory="INSTALLFOLDER"
+                Icon="icon.ico"/>
+            <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+            <RegistryValue Root="HKCU" Key="Software\Ignytis\Ez2note" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+        </Component>
+    </DirectoryRef>
+
+    <ComponentGroup Id="RegistryComponents" Directory="INSTALLFOLDER">
+        <Component Id="RegistryEntries" Guid="a1e8697a-2479-445e-99e5-1c88e78553f1">
+            <!-- Register application so it can be chosen in "Open With..." -->
+            <RegistryKey Root="HKCR" Key="Applications\ez2note.exe\shell\open\command">
+                <RegistryValue Type="string" Value="&quot;[#ez2note.exe]&quot; &quot;%1&quot;" KeyPath="yes" />
+            </RegistryKey>
+            <!-- Add to context menu for all files -->
+            <RegistryKey Root="HKCR" Key="*\shell\Ez2note">
+                <RegistryValue Type="string" Value="Open with Ez2note" />
+            </RegistryKey>
+            <RegistryKey Root="HKCR" Key="*\shell\Ez2note\command">
+                <RegistryValue Type="string" Value="&quot;[#ez2note.exe]&quot; &quot;%1&quot;" />
+            </RegistryKey>
+        </Component>
+    </ComponentGroup>
+
     <Feature Id="Main">
       <ComponentGroupRef Id="MainComponents" />
+      <ComponentRef Id="ApplicationShortcut" />
+      <ComponentGroupRef Id="RegistryComponents" />
     </Feature>
 
   </Package>

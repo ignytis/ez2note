@@ -1,6 +1,6 @@
 %define _build_id_links none
 Name:           ez2note
-Version:        0.0.1
+Version:        1.0.0
 Release:        1%{?dist}
 Summary:        A simple text editor
 
