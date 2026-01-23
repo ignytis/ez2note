@@ -22,12 +22,16 @@ string getAppHomeDir() {
     if (cAppHomeDir) {
         appHomeDir = string(cAppHomeDir);
     } else {
-        appHomeDir = wxStandardPaths::wxStandardPaths::Get().GetUserDataDir().ToStdString();
+        appHomeDir = wxStandardPaths::wxStandardPaths::Get()
+                         .GetUserDataDir()
+                         .ToStdString();
     }
     return appHomeDir;
 }
 
-string jsonBoolToString(json b) { return !b.is_null() && b ? CONFIG_VALUE_BOOL_TRUE : CONFIG_VALUE_BOOL_FALSE; }
+string jsonBoolToString(json b) {
+    return !b.is_null() && b ? CONFIG_VALUE_BOOL_TRUE : CONFIG_VALUE_BOOL_FALSE;
+}
 
 /**
  * Returns default KV map for config
@@ -51,8 +55,10 @@ Config::Config() : kv(getDefaultKv()) {
         configFile.close();
     }
 
-    kv[CONFIG_KEY_EDITOR_SHOW_LINE_NUMBERS] = jsonBoolToString(configJson[CONFIG_KEY_EDITOR_SHOW_LINE_NUMBERS]);
-    kv[CONFIG_KEY_EDITOR_WORD_WRAP] = jsonBoolToString(configJson[CONFIG_KEY_EDITOR_WORD_WRAP]);
+    kv[CONFIG_KEY_EDITOR_SHOW_LINE_NUMBERS] =
+        jsonBoolToString(configJson[CONFIG_KEY_EDITOR_SHOW_LINE_NUMBERS]);
+    kv[CONFIG_KEY_EDITOR_WORD_WRAP] =
+        jsonBoolToString(configJson[CONFIG_KEY_EDITOR_WORD_WRAP]);
 }
 
 bool Config::getBool(const string& key) {

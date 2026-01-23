@@ -64,10 +64,12 @@ MainWindow::MainWindow(Ez2note::Config& config)
     SetMenuBar(new MenuBar(config));
 
     textEdit = new wxStyledTextCtrl(this, wxID_ANY);
-    textEdit->SetMarginWidth(1, config.getBool(CONFIG_KEY_EDITOR_SHOW_LINE_NUMBERS) ? 50 : 0);
+    textEdit->SetMarginWidth(
+        1, config.getBool(CONFIG_KEY_EDITOR_SHOW_LINE_NUMBERS) ? 50 : 0);
     textEdit->SetMarginType(1, wxSTC_MARGIN_NUMBER);
-    textEdit->SetWrapMode(config.getBool(CONFIG_KEY_EDITOR_WORD_WRAP) ? wxSTC_WRAP_WORD
-                                                     : wxSTC_WRAP_NONE);
+    textEdit->SetWrapMode(config.getBool(CONFIG_KEY_EDITOR_WORD_WRAP)
+                              ? wxSTC_WRAP_WORD
+                              : wxSTC_WRAP_NONE);
 
     CreateStatusBar();
     SetStatusText(wxString::Format("Welcome to %s!", EZ2NOTE_APP_NAME));
