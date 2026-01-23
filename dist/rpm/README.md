@@ -1,32 +1,17 @@
 # Building the RPM package
 
-## Prerequisites
-
-RPM expects the source archive to exist in the `SOURCES` directory.
-Create it using the command below (mind the app version):
+From root directory of the project run:
 
 ```bash
-# Project ROOT dir
-tar \
-    --transform 's,^,ez2note-1.0.0/,' \
-    -cvf dist/rpm/SOURCES/ez2note-1.0.0.tar.gz \
-    src assets CMakeLists.txt
-```
-
-## Building
-
-```bash
-# dist/rpm dir
-rpmbuild --define "_topdir $PWD" -bb SPECS/ez2note.spec
+bash ./dist/rpm/build.sh
 ```
 
 ## Verification
 
 The result RPM package should be available in the `RPMS` directory.
-Install it:
+Install it (mind the version):
 
 ```bash
-# Project ROOT dir
 sudo rpm -Uvh ./dist/rpm/RPMS/x86_64/ez2note-1.0.0-1.fc43.x86_64.rpm
 ```
 Now the application could be found in GNOME applications menu.

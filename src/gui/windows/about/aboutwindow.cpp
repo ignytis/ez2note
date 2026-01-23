@@ -16,7 +16,7 @@ AboutWindow::AboutWindow(wxWindow* parent)
     wxPanel* panel = new wxPanel(this, wxID_ANY);
     wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
 
-    wxStaticText* appName = new wxStaticText(panel, wxID_ANY, EZ2NOTE_APP_NAME);
+    wxStaticText* appName = new wxStaticText(panel, wxID_ANY, wxString::Format("%s %s", EZ2NOTE_APP_NAME, EZ2NOTE_APP_VERSION));
     vbox->Add(appName, 0, wxALIGN_CENTER | wxTOP, 10);
 
     wxStaticText* appDescription =

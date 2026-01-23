@@ -1,6 +1,12 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.19)
 
-project(ez2note VERSION 1.0.0 LANGUAGES CXX)
+# Read project info
+file(READ project.json PROJECT_INFO)
+string(JSON APP_VERSION GET ${PROJECT_INFO} version)
+string(JSON APP_NAME GET ${PROJECT_INFO} name)
+string(TOLOWER ${APP_NAME} APP_NAME_LOWERCASE)
+
+project(${APP_NAME} VERSION ${APP_VERSION} LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -18,7 +24,7 @@ find_package(wxWidgets COMPONENTS stc core base REQUIRED)
 
 include(${wxWidgets_USE_FILE})
 
-add_executable(ez2note
+add_executable(${APP_NAME_LOWERCASE}
     src/app.cpp
     src/config.cpp
     src/gui/windows/about/aboutwindow.cpp
@@ -29,13 +35,15 @@ add_executable(ez2note
 )
 
 if(WIN32)
-    target_sources(ez2note PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/resource.rc)
+    target_sources(${APP_NAME_LOWERCASE} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/resource.rc)
 endif()
 
-target_include_directories(ez2note PRIVATE src)
-target_link_libraries(ez2note PRIVATE wxWidgets::wxWidgets nlohmann_json::nlohmann_json)
+target_include_directories(${APP_NAME_LOWERCASE} PRIVATE src)
+target_link_libraries(${APP_NAME_LOWERCASE} PRIVATE wxWidgets::wxWidgets nlohmann_json::nlohmann_json)
 
-set_target_properties(ez2note PROPERTIES
+add_compile_definitions(APP_VERSION="${APP_VERSION}")
+
+set_target_properties(${APP_NAME_LOWERCASE} PROPERTIES
     WIN32_EXECUTABLE ON
     MACOSX_BUNDLE ON
 )
