@@ -9,7 +9,27 @@
 ## Coding style
 
 - Use the Google C++ Style Guide
+- Include guards in header files have a `_HPP` suffix and include a path to header file relatively
+  to `src` directory. Example: `src/dir/subdir/mywidget.hpp` -> `DIR_SUBDIR_MYWIDGET_HPP`
+- Prefer ternary operators instead of if-else blocks with single statements
+- Return early if the whole remaining code inside function is if-else statement
+- Prefer explicit type declaration over `auto` keyword
+- Namespaces are used to organize code into logical units. The structure of namespaces should
+  reflect the project's directory structure, e.g.
+  `src/gui/windows/main` directory -> `Ez2note::Gui::Windows::Main`
+- Do not delete the `*_dummy()` functions, they are used to prevent clang-format
+  from auto-formatting the code below `wxEND_EVENT_TABLE`
+- Format code using `clang-format` using `./cmd.sh format`
+- Add comments for classes and functions
+
+### CMakeLists.txt
+
+- Keep only one `CMakeLists.txt` file in the root directory
+- Add new source files to `CMakeLists.txt`
 - Order alphabetically the source file paths in `CMakeLists.txt`
+
+### `#include` statements
+
 - Group the `#include` statements, adding an empty line between each group:
   - for `*.cpp` files the corresponding `*.hpp` file is first
   - standard library includes, like `#include <iostream>`
@@ -17,16 +37,7 @@
   - project includes, like `#include "mywidget.h"`
 - Group include statements: global includes e.g. `<MyWidget>` are placed before
   relative includes like `"mywidget.h"`. Groups are separated with empty line.
-- Include guards in header files have a `_HPP` suffix and include a path to header file relatively
-  to `src` directory. Example: `src/dir/subdir/mywidget.hpp` -> `DIR_SUBDIR_MYWIDGET_HPP`
-- Prefer ternary operators instead of if-else blocks with single statements
-- Return early if the whole remaining code inside function is if-else statement
-- Prefer explicit type declaration over `auto` keyword
-- Inside project, prefer relative paths in `#include` statements
-- Namespaces are used to organize code into logical units. The structure of namespaces should
-  reflect the project's directory structure, e.g. `src/gui/windows/main` directory -> `Ez2note::Gui::Windows::Main`
-- Do not delete the `*_dummy()` functions, they are used to prevent clang-format
-  from auto-formatting the code below `wxEND_EVENT_TABLE`
+- Prefer relative paths in `#include` statements
 
 ### *.cpp files
 

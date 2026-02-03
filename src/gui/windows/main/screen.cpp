@@ -2,10 +2,7 @@
 
 #include "buffers/filebuffer.hpp"
 
-namespace Ez2note {
-namespace Gui {
-namespace Windows {
-namespace Main {
+using namespace Ez2note::Gui::Windows::Main;
 
 Screen::Screen(wxWindow* parent, Ez2note::Config& config)
     : wxPanel(parent, wxID_ANY), activeBuffer(nullptr), config(config) {
@@ -104,8 +101,3 @@ bool Screen::IsModified() const {
     if (activeBuffer) return activeBuffer->IsModified();
     return false;
 }
-
-}  // namespace Main
-}  // namespace Windows
-}  // namespace Gui
-}  // namespace Ez2note

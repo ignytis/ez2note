@@ -12,7 +12,9 @@ function run {
     ./build/ez2note
 }
 
-if [ "$COMMAND" = "compile" ]; then
+if [ "$COMMAND" = "init" ]; then
+    cmake -DCMAKE_BUILD_TYPE=DEBUG .
+elif [ "$COMMAND" = "compile" ]; then
     compile
 elif [ "$COMMAND" = "run" ]; then
     run    
@@ -22,5 +24,5 @@ elif [ "$COMMAND" = "compile-run" ]; then
 elif [ "$COMMAND" = "format" ]; then
     find src \( -name '*.cpp' -o -name '*.hpp' \)  | xargs -I % clang-format -i % -style=file
 else
-    echo "Usage: ./cmd.sh [compile|run|compile-run]"
+    echo "Usage: ./cmd.sh [init|compile|run|compile-run|format]"
 fi

@@ -2,11 +2,7 @@
 
 #include <wx/filename.h>
 
-namespace Ez2note {
-namespace Gui {
-namespace Windows {
-namespace Main {
-namespace Buffers {
+using namespace Ez2note::Gui::Windows::Main::Buffers;
 
 FileBuffer::FileBuffer(wxWindow* parent, Ez2note::Config& config,
                        const wxString& filePath)
@@ -48,9 +44,3 @@ wxString FileBuffer::GetTitle() const {
     wxFileName fileName(filePath);
     return fileName.GetFullName();
 }
-
-}  // namespace Buffers
-}  // namespace Main
-}  // namespace Windows
-}  // namespace Gui
-}  // namespace Ez2note
