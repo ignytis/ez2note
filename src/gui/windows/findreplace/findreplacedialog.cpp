@@ -21,7 +21,7 @@ wxEND_EVENT_TABLE()
     /* clang-format on */
 
     // a dummy function to make clang-format happy
-    void _dummy(){};
+    void _find_replace_dummy(){};
 
 FindReplaceDialog::FindReplaceDialog(wxWindow* parent,
                                      wxStyledTextCtrl* textEdit)

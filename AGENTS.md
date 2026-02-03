@@ -25,6 +25,12 @@
 - Inside project, prefer relative paths in `#include` statements
 - Namespaces are used to organize code into logical units. The structure of namespaces should
   reflect the project's directory structure, e.g. `src/gui/windows/main` directory -> `Ez2note::Gui::Windows::Main`
+- Do not delete the `*_dummy()` functions, they are used to prevent clang-format
+  from auto-formatting the code below `wxEND_EVENT_TABLE`
+
+### *.cpp files
+
+- Prefer `using namespace <namespace>;` instead of `namespace <namespace> {`
 
 ## Validation of result
 

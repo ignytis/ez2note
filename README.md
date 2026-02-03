@@ -50,3 +50,13 @@ Dependencies (like wxWidgets) could be installed using vcpkg.
 ```bash
 make -j"$(nproc)"
 ```
+
+## Development
+
+### Code style
+
+Use `clang-format` to format the code:
+
+```bash
+find src \( -name '*.cpp' -o -name '*.hpp' \)  | xargs -I % clang-format -i % -style=file
+```

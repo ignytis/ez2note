@@ -1,10 +1,10 @@
 #ifndef GUI_WINDOWS_MAIN_MAINWINDOW_HPP
 #define GUI_WINDOWS_MAIN_MAINWINDOW_HPP
 
-#include <wx/stc/stc.h>
 #include <wx/wx.h>
 
 #include "../../../config.hpp"
+#include "screen.hpp"
 
 namespace Ez2note {
 namespace Gui {
@@ -35,12 +35,7 @@ class MainWindow : public wxFrame {
 
     void OnClose(wxCloseEvent& event);
 
-    void doSaveFile();  // saves the current file
-    void doSaveFile(
-        wxString filePath);  // saves the specified file and sets it as current
-
-    wxStyledTextCtrl* textEdit;
-    wxString currentFile;
+    Screen* screen;
     Ez2note::Config& config;
 
     wxDECLARE_EVENT_TABLE();
