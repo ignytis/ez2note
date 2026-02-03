@@ -11,16 +11,20 @@ enum {
     ID_REPLACE_ALL_BUTTON
 };
 
-wxBEGIN_EVENT_TABLE(FindReplaceDialog,
-                    wxDialog) EVT_BUTTON(ID_FINDNEXT_BUTTON,
-                                         FindReplaceDialog::OnFindNext)
+/* clang-format off */
+wxBEGIN_EVENT_TABLE(FindReplaceDialog, wxDialog)
+    EVT_BUTTON(ID_FINDNEXT_BUTTON, FindReplaceDialog::OnFindNext)
     EVT_BUTTON(ID_FINDPREV_BUTTON, FindReplaceDialog::OnFindPrev)
-        EVT_BUTTON(ID_REPLACE_BUTTON, FindReplaceDialog::OnReplace)
-            EVT_BUTTON(ID_REPLACE_ALL_BUTTON,
-                       FindReplaceDialog::OnReplaceAll) wxEND_EVENT_TABLE()
+    EVT_BUTTON(ID_REPLACE_BUTTON, FindReplaceDialog::OnReplace)
+    EVT_BUTTON(ID_REPLACE_ALL_BUTTON, FindReplaceDialog::OnReplaceAll)
+wxEND_EVENT_TABLE()
+    /* clang-format on */
 
-                FindReplaceDialog::FindReplaceDialog(wxWindow* parent,
-                                                     wxStyledTextCtrl* textEdit)
+    // a dummy function to make clang-format happy
+    void _dummy(){};
+
+FindReplaceDialog::FindReplaceDialog(wxWindow* parent,
+                                     wxStyledTextCtrl* textEdit)
     : wxDialog(parent, wxID_ANY, "Find and Replace"), textEdit(textEdit) {
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
