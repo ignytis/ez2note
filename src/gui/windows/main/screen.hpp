@@ -13,6 +13,10 @@ namespace Gui {
 namespace Windows {
 namespace Main {
 
+/**
+ * Screen is a container for buffers.
+ * Currently, the application can have only one screen with one buffer inside.
+ */
 class Screen : public wxPanel {
    public:
     Screen(wxWindow* parent, Ez2note::Config& config);

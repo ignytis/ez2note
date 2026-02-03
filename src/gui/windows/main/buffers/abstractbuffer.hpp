@@ -1,7 +1,6 @@
 #ifndef GUI_WINDOWS_MAIN_BUFFERS_ABSTRACTBUFFER_HPP
 #define GUI_WINDOWS_MAIN_BUFFERS_ABSTRACTBUFFER_HPP
 
-#include <wx/stc/stc.h>
 #include <wx/wx.h>
 
 #include "../../../../config.hpp"
@@ -12,22 +11,19 @@ namespace Windows {
 namespace Main {
 namespace Buffers {
 
+/**
+ * AbstractBuffer is a base class for all buffers.
+ * Buffer can show file edit in the text editor or theoretically
+ * could display anything else (HEX editor? Terminal?)
+ */
 class AbstractBuffer : public wxPanel {
    public:
     AbstractBuffer(wxWindow* parent, Ez2note::Config& config);
     virtual ~AbstractBuffer() = default;
 
-    virtual void Undo();
-    virtual void Redo();
-    virtual void SetShowLineNumbers(bool show);
-    virtual void SetWordWrap(bool wrap);
-    virtual bool IsModified() const;
     virtual wxString GetTitle() const = 0;
 
-    wxStyledTextCtrl* GetTextEdit() const { return textEdit; }
-
    protected:
-    wxStyledTextCtrl* textEdit;
     Ez2note::Config& config;
 };
 

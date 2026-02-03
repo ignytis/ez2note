@@ -7,7 +7,8 @@
 #include "../../../constants.hpp"
 #include "../about/aboutwindow.hpp"
 #include "../findreplace/findreplacedialog.hpp"
-#include "buffers/filebuffer.hpp"
+#include "buffers/abstractfilebuffer.hpp"
+#include "buffers/richfilebuffer.hpp"
 #include "menubar.hpp"
 
 using namespace Ez2note::Gui::Windows::About;
@@ -119,8 +120,8 @@ void MainWindow::OnSave(wxCommandEvent& event) {
     if (!active) return;
 
     // Check if it's a file buffer
-    Buffers::FileBuffer* fileBuffer =
-        dynamic_cast<Buffers::FileBuffer*>(active);
+    Buffers::AbstractFileBuffer* fileBuffer =
+        dynamic_cast<Buffers::AbstractFileBuffer*>(active);
     if (!fileBuffer) return;  // Should handle non-file buffers if any
 
     if (!fileBuffer->HasFile()) {
@@ -140,8 +141,8 @@ void MainWindow::OnSaveAs(wxCommandEvent& event) {
 
     Buffers::AbstractBuffer* active = screen->GetActiveBuffer();
     if (active) {
-        Buffers::FileBuffer* fileBuffer =
-            dynamic_cast<Buffers::FileBuffer*>(active);
+        Buffers::AbstractFileBuffer* fileBuffer =
+            dynamic_cast<Buffers::AbstractFileBuffer*>(active);
         if (fileBuffer) {
             fileBuffer->SaveFileAs(saveFileDialog.GetPath());
             SetStatusText(wxString::Format("File saved to '%s'",
@@ -161,9 +162,12 @@ void MainWindow::OnRedo(wxCommandEvent& event) { screen->Redo(); }
 
 void MainWindow::OnFindReplace(wxCommandEvent& event) {
     Buffers::AbstractBuffer* active = screen->GetActiveBuffer();
-    if (active && active->GetTextEdit()) {
+    Buffers::RichFileBuffer* richBuffer =
+        dynamic_cast<Buffers::RichFileBuffer*>(active);
+
+    if (richBuffer && richBuffer->GetTextEdit()) {
         FindReplaceDialog* findReplace =
-            new FindReplaceDialog(this, active->GetTextEdit());
+            new FindReplaceDialog(this, richBuffer->GetTextEdit());
         findReplace->Show();
     }
 }

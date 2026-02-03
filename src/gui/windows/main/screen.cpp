@@ -1,6 +1,7 @@
 #include "screen.hpp"
 
-#include "buffers/filebuffer.hpp"
+#include "buffers/abstractfilebuffer.hpp"
+#include "buffers/richfilebuffer.hpp"
 
 using namespace Ez2note::Gui::Windows::Main;
 
@@ -18,15 +19,16 @@ Screen::~Screen() {
 }
 
 Buffers::AbstractBuffer* Screen::OpenNewFile() {
-    Buffers::FileBuffer* newBuffer = new Buffers::FileBuffer(this, config);
+    Buffers::RichFileBuffer* newBuffer =
+        new Buffers::RichFileBuffer(this, config);
     buffers.push_back(newBuffer);
     SetActiveBuffer(newBuffer);
     return newBuffer;
 }
 
 Buffers::AbstractBuffer* Screen::OpenFile(const wxString& filePath) {
-    Buffers::FileBuffer* newBuffer =
-        new Buffers::FileBuffer(this, config, filePath);
+    Buffers::RichFileBuffer* newBuffer =
+        new Buffers::RichFileBuffer(this, config, filePath);
     buffers.push_back(newBuffer);
     SetActiveBuffer(newBuffer);
     return newBuffer;
@@ -82,22 +84,32 @@ void Screen::UpdateLayout() {
 }
 
 void Screen::Undo() {
-    if (activeBuffer) activeBuffer->Undo();
+    Buffers::AbstractFileBuffer* fileBuffer =
+        dynamic_cast<Buffers::AbstractFileBuffer*>(activeBuffer);
+    if (fileBuffer) fileBuffer->Undo();
 }
 
 void Screen::Redo() {
-    if (activeBuffer) activeBuffer->Redo();
+    Buffers::AbstractFileBuffer* fileBuffer =
+        dynamic_cast<Buffers::AbstractFileBuffer*>(activeBuffer);
+    if (fileBuffer) fileBuffer->Redo();
 }
 
 void Screen::SetShowLineNumbers(bool show) {
-    if (activeBuffer) activeBuffer->SetShowLineNumbers(show);
+    Buffers::AbstractFileBuffer* fileBuffer =
+        dynamic_cast<Buffers::AbstractFileBuffer*>(activeBuffer);
+    if (fileBuffer) fileBuffer->SetShowLineNumbers(show);
 }
 
 void Screen::SetWordWrap(bool wrap) {
-    if (activeBuffer) activeBuffer->SetWordWrap(wrap);
+    Buffers::AbstractFileBuffer* fileBuffer =
+        dynamic_cast<Buffers::AbstractFileBuffer*>(activeBuffer);
+    if (fileBuffer) fileBuffer->SetWordWrap(wrap);
 }
 
 bool Screen::IsModified() const {
-    if (activeBuffer) return activeBuffer->IsModified();
+    Buffers::AbstractFileBuffer* fileBuffer =
+        dynamic_cast<Buffers::AbstractFileBuffer*>(activeBuffer);
+    if (fileBuffer) return fileBuffer->IsModified();
     return false;
 }
