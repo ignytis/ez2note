@@ -13,6 +13,8 @@ namespace Gui {
 namespace Windows {
 namespace Main {
 
+wxDECLARE_EVENT(DATA_BUFFER_CHANGED, wxCommandEvent);
+
 /**
  * Screen is a container for buffers.
  * Currently, the application can have only one screen with one buffer inside.

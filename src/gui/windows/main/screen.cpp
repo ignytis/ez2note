@@ -5,6 +5,9 @@
 
 using namespace Ez2note::Gui::Windows::Main;
 
+wxDEFINE_EVENT(Ez2note::Gui::Windows::Main::DATA_BUFFER_CHANGED,
+               wxCommandEvent);
+
 Screen::Screen(wxWindow* parent, Ez2note::Config& config)
     : wxPanel(parent, wxID_ANY), activeBuffer(nullptr), config(config) {
     sizer = new wxBoxSizer(wxVERTICAL);
@@ -17,6 +20,8 @@ Screen::~Screen() {
     // we accessed them in destructor later (though we don't).
     buffers.clear();
 }
+
+// TODO: move the whole file-specific logic to AbstractFileBuffer or derived classes
 
 Buffers::AbstractBuffer* Screen::OpenNewFile() {
     Buffers::RichFileBuffer* newBuffer =
@@ -64,6 +69,10 @@ Buffers::AbstractBuffer* Screen::GetActiveBuffer() const {
 void Screen::SetActiveBuffer(Buffers::AbstractBuffer* buffer) {
     activeBuffer = buffer;
     UpdateLayout();
+
+    wxCommandEvent event(DATA_BUFFER_CHANGED);
+    event.SetEventObject(this);
+    ProcessWindowEvent(event);
 }
 
 void Screen::UpdateLayout() {

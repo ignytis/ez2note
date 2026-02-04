@@ -33,9 +33,25 @@ class RichFileBuffer : public AbstractFileBuffer {
     bool SaveFileAs(const wxString& path) override;
 
     wxStyledTextCtrl* GetTextEdit() const { return textEdit; }
+    AbstractMenu* GetMenu() override;
+
+    // Event handlers
+    void OnSave(wxCommandEvent& event);
+    void OnSaveAs(wxCommandEvent& event);
+    void OnUndo(wxCommandEvent& event);
+    void OnRedo(wxCommandEvent& event);
+    void OnFindReplace(wxCommandEvent& event);
+    void OnToggleLineNumbers(wxCommandEvent& event);
+    void OnToggleWordWrap(wxCommandEvent& event);
+
+    class MenuBar : public AbstractMenu {
+       public:
+        MenuBar(Ez2note::Config& config);
+    };
 
    protected:
     wxStyledTextCtrl* textEdit;
+    MenuBar* menuBar;
 };
 
 }  // namespace Buffers

@@ -28,6 +28,7 @@ add_executable(${APP_NAME_LOWERCASE}
     src/app.cpp
     src/config.cpp
     src/gui/windows/about/aboutwindow.cpp
+    src/gui/windows/abstractmenu.cpp
     src/gui/windows/findreplace/findreplacedialog.cpp
     src/gui/windows/main/buffers/abstractbuffer.cpp
     src/gui/windows/main/buffers/abstractfilebuffer.cpp

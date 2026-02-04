@@ -4,6 +4,7 @@
 #include <wx/wx.h>
 
 #include "../../../../config.hpp"
+#include "../../abstractmenu.hpp"
 
 namespace Ez2note {
 namespace Gui {
@@ -22,6 +23,7 @@ class AbstractBuffer : public wxPanel {
     virtual ~AbstractBuffer() = default;
 
     virtual wxString GetTitle() const = 0;
+    virtual AbstractMenu* GetMenu() = 0;
 
    protected:
     Ez2note::Config& config;
