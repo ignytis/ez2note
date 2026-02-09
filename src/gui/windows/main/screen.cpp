@@ -1,6 +1,7 @@
 #include "screen.hpp"
 
-#include "buffers/abstractfilebuffer.hpp"
+#include <wx/event.h>
+
 #include "buffers/richfilebuffer.hpp"
 
 using namespace Ez2note::Gui::Windows::Main;
@@ -9,9 +10,19 @@ wxDEFINE_EVENT(Ez2note::Gui::Windows::Main::DATA_BUFFER_CHANGED,
                wxCommandEvent);
 
 Screen::Screen(wxWindow* parent, Ez2note::Config& config)
-    : wxPanel(parent, wxID_ANY), activeBuffer(nullptr), config(config) {
+    : wxPanel(parent, wxID_ANY),
+      mainWindow(dynamic_cast<wxFrame*>(parent)),
+      activeBuffer(nullptr),
+      config(config) {
     sizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(sizer);
+
+    Bind(DATA_BUFFER_CHANGED, &Screen::OnBufferChanged, this);
+
+    // Create initial buffer
+    Buffers::RichFileBuffer* initialBuffer =
+        new Buffers::RichFileBuffer(this, mainWindow, config);
+    AddBuffer(initialBuffer);
 }
 
 Screen::~Screen() {
@@ -21,22 +32,9 @@ Screen::~Screen() {
     buffers.clear();
 }
 
-// TODO: move the whole file-specific logic to AbstractFileBuffer or derived classes
-
-Buffers::AbstractBuffer* Screen::OpenNewFile() {
-    Buffers::RichFileBuffer* newBuffer =
-        new Buffers::RichFileBuffer(this, config);
-    buffers.push_back(newBuffer);
-    SetActiveBuffer(newBuffer);
-    return newBuffer;
-}
-
-Buffers::AbstractBuffer* Screen::OpenFile(const wxString& filePath) {
-    Buffers::RichFileBuffer* newBuffer =
-        new Buffers::RichFileBuffer(this, config, filePath);
-    buffers.push_back(newBuffer);
-    SetActiveBuffer(newBuffer);
-    return newBuffer;
+void Screen::AddBuffer(Buffers::AbstractBuffer* buffer) {
+    buffers.push_back(buffer);
+    SetActiveBuffer(buffer);
 }
 
 void Screen::CloseBuffer(Buffers::AbstractBuffer* buffer) {
@@ -60,6 +58,10 @@ void Screen::CloseBuffer(Buffers::AbstractBuffer* buffer) {
     // Destroy the window
     buffer->Destroy();
     UpdateLayout();
+}
+
+void Screen::OnBufferChanged(wxCommandEvent& event) {
+    wxPostEvent(mainWindow, event);
 }
 
 Buffers::AbstractBuffer* Screen::GetActiveBuffer() const {
@@ -90,35 +92,4 @@ void Screen::UpdateLayout() {
 
     Layout();
     Refresh();
-}
-
-void Screen::Undo() {
-    Buffers::AbstractFileBuffer* fileBuffer =
-        dynamic_cast<Buffers::AbstractFileBuffer*>(activeBuffer);
-    if (fileBuffer) fileBuffer->Undo();
-}
-
-void Screen::Redo() {
-    Buffers::AbstractFileBuffer* fileBuffer =
-        dynamic_cast<Buffers::AbstractFileBuffer*>(activeBuffer);
-    if (fileBuffer) fileBuffer->Redo();
-}
-
-void Screen::SetShowLineNumbers(bool show) {
-    Buffers::AbstractFileBuffer* fileBuffer =
-        dynamic_cast<Buffers::AbstractFileBuffer*>(activeBuffer);
-    if (fileBuffer) fileBuffer->SetShowLineNumbers(show);
-}
-
-void Screen::SetWordWrap(bool wrap) {
-    Buffers::AbstractFileBuffer* fileBuffer =
-        dynamic_cast<Buffers::AbstractFileBuffer*>(activeBuffer);
-    if (fileBuffer) fileBuffer->SetWordWrap(wrap);
-}
-
-bool Screen::IsModified() const {
-    Buffers::AbstractFileBuffer* fileBuffer =
-        dynamic_cast<Buffers::AbstractFileBuffer*>(activeBuffer);
-    if (fileBuffer) return fileBuffer->IsModified();
-    return false;
 }

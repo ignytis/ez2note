@@ -1,14 +1,28 @@
 #include "richfilebuffer.hpp"
 
+#include <wx/msgdlg.h>
+
+#include "../../../../constants.hpp"
 #include "../../findreplace/findreplacedialog.hpp"
-#include "../menubar.hpp"  // For IDs like ID_MENU_EDIT_FIND_REPLACE
+#include "../mainwindow.hpp"
+#include "../screen.hpp"
 
 using namespace Ez2note::Gui::Windows::Main::Buffers;
 using Ez2note::Gui::Windows::AbstractMenu;
 
-RichFileBuffer::RichFileBuffer(wxWindow* parent, Ez2note::Config& config,
+namespace {
+int showDocumentModifiedDialog() {
+    return wxMessageBox(
+        "The document has been modified.\nDo you want to save your "
+        "changes?",
+        EZ2NOTE_APP_NAME, wxYES_NO | wxCANCEL);
+}
+}  // namespace
+
+RichFileBuffer::RichFileBuffer(wxWindow* parent, wxFrame* mainFrame,
+                               Ez2note::Config& config,
                                const wxString& filePath)
-    : AbstractFileBuffer(parent, config, filePath) {
+    : AbstractFileBuffer(parent, mainFrame, config, filePath) {
     textEdit = new wxStyledTextCtrl(this, wxID_ANY);
 
     // Initial setup from config
@@ -29,6 +43,8 @@ RichFileBuffer::RichFileBuffer(wxWindow* parent, Ez2note::Config& config,
     }
 
     menuBar = new MenuBar(config);
+
+    Bind(wxEVT_SHOW, &RichFileBuffer::OnShow, this);
 }
 
 void RichFileBuffer::Undo() { textEdit->Undo(); }
@@ -68,11 +84,120 @@ bool RichFileBuffer::SaveFileAs(const wxString& path) {
     return false;
 }
 
+void RichFileBuffer::OnShow(wxShowEvent& event) {
+    if (event.GetEventObject() != this) return;
+
+    if (event.IsShown()) {
+        // Bind menu events
+        this->mainFrame->Bind(wxEVT_MENU, &RichFileBuffer::OnNew, this,
+                              wxID_NEW);
+        this->mainFrame->Bind(wxEVT_MENU, &RichFileBuffer::OnOpen, this,
+                              wxID_OPEN);
+        this->mainFrame->Bind(wxEVT_MENU, &RichFileBuffer::OnSave, this,
+                              wxID_SAVE);
+        this->mainFrame->Bind(wxEVT_MENU, &RichFileBuffer::OnSaveAs, this,
+                              wxID_SAVEAS);
+        this->mainFrame->Bind(wxEVT_MENU, &RichFileBuffer::OnUndo, this,
+                              wxID_UNDO);
+        this->mainFrame->Bind(wxEVT_MENU, &RichFileBuffer::OnRedo, this,
+                              wxID_REDO);
+        this->mainFrame->Bind(wxEVT_MENU, &RichFileBuffer::OnFindReplace, this,
+                              100);  // 100 is ID_MENU_EDIT_FIND_REPLACE
+        this->mainFrame->Bind(wxEVT_MENU, &RichFileBuffer::OnToggleLineNumbers,
+                              this, ID_MENU_VIEW_TOGGLE_LINE_NUMBERS);
+        this->mainFrame->Bind(wxEVT_MENU, &RichFileBuffer::OnToggleWordWrap,
+                              this, ID_MENU_VIEW_TOGGLE_WORD_WRAP);
+    } else {
+        // Unbind menu events
+        this->mainFrame->Unbind(wxEVT_MENU, &RichFileBuffer::OnNew, this,
+                                wxID_NEW);
+        this->mainFrame->Unbind(wxEVT_MENU, &RichFileBuffer::OnOpen, this,
+                                wxID_OPEN);
+        this->mainFrame->Unbind(wxEVT_MENU, &RichFileBuffer::OnSave, this,
+                                wxID_SAVE);
+        this->mainFrame->Unbind(wxEVT_MENU, &RichFileBuffer::OnSaveAs, this,
+                                wxID_SAVEAS);
+        this->mainFrame->Unbind(wxEVT_MENU, &RichFileBuffer::OnUndo, this,
+                                wxID_UNDO);
+        this->mainFrame->Unbind(wxEVT_MENU, &RichFileBuffer::OnRedo, this,
+                                wxID_REDO);
+        this->mainFrame->Unbind(wxEVT_MENU, &RichFileBuffer::OnFindReplace,
+                                this, 100);
+        this->mainFrame->Unbind(wxEVT_MENU,
+                                &RichFileBuffer::OnToggleLineNumbers, this,
+                                ID_MENU_VIEW_TOGGLE_LINE_NUMBERS);
+        this->mainFrame->Unbind(wxEVT_MENU, &RichFileBuffer::OnToggleWordWrap,
+                                this, ID_MENU_VIEW_TOGGLE_WORD_WRAP);
+    }
+
+    event.Skip();
+}
+
+void RichFileBuffer::OnNew(wxCommandEvent& event) {
+    if (IsModified()) {
+        switch (showDocumentModifiedDialog()) {
+            case wxYES: {
+                if (!HasFile()) {
+                    OnSaveAs(event);
+                } else {
+                    SaveFile();
+                }
+                break;
+            }
+            case wxCANCEL:
+                return;
+        }
+    }
+
+    Ez2note::Gui::Windows::Main::MainWindow* mw =
+        dynamic_cast<Ez2note::Gui::Windows::Main::MainWindow*>(mainFrame);
+    if (mw) {
+        Buffers::RichFileBuffer* newBuffer =
+            new Buffers::RichFileBuffer(mw->GetScreen(), mw, config);
+        // TODO: do NOT create buffer. Contents of current buffer should be used
+        // instead
+        mw->GetScreen()->AddBuffer(newBuffer);
+    }
+}
+
+void RichFileBuffer::OnOpen(wxCommandEvent& event) {
+    if (IsModified()) {
+        switch (showDocumentModifiedDialog()) {
+            case wxYES: {
+                if (!HasFile()) {
+                    OnSaveAs(event);
+                } else {
+                    SaveFile();
+                }
+                break;
+            }
+            case wxCANCEL:
+                return;
+        }
+    }
+
+    wxFileDialog openFileDialog(this, "Open file", "", "", "All files|*",
+                                wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+
+    if (openFileDialog.ShowModal() == wxID_CANCEL) return;
+
+    Ez2note::Gui::Windows::Main::MainWindow* mw =
+        dynamic_cast<Ez2note::Gui::Windows::Main::MainWindow*>(mainFrame);
+    if (mw) {
+        Buffers::RichFileBuffer* newBuffer = new Buffers::RichFileBuffer(
+            mw->GetScreen(), mw, config, openFileDialog.GetPath());
+        // TODO: do NOT create buffer. Contents of current buffer should be used
+        // instead
+        mw->GetScreen()->AddBuffer(newBuffer);
+    }
+}
+
 void RichFileBuffer::OnSave(wxCommandEvent& event) {
     if (!HasFile()) {
         OnSaveAs(event);
     } else {
         SaveFile();
+        // TODO: send event to mainWindow in order to update the status bar
         // SetStatusText(wxString::Format("File saved")); // No access to
         // StatusBar here easily
     }
@@ -86,7 +211,6 @@ void RichFileBuffer::OnSaveAs(wxCommandEvent& event) {
     if (saveFileDialog.ShowModal() == wxID_CANCEL) return;
 
     SaveFileAs(saveFileDialog.GetPath());
-    // SetStatusText ...
 }
 
 void RichFileBuffer::OnUndo(wxCommandEvent& event) { Undo(); }

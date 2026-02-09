@@ -2,6 +2,7 @@
 
 #include <wx/cmdline.h>
 
+#include "gui/windows/main/buffers/abstractfilebuffer.hpp"
 #include "gui/windows/main/mainwindow.hpp"
 
 using namespace Ez2note;
@@ -31,7 +32,13 @@ bool App::OnInit() {
 
     MainWindow* window = new MainWindow(config);
     if (!m_fileName.IsEmpty()) {
-        window->OpenFile(m_fileName);
+        Buffers::AbstractBuffer* active =
+            window->GetScreen()->GetActiveBuffer();
+        Buffers::AbstractFileBuffer* fileBuffer =
+            dynamic_cast<Buffers::AbstractFileBuffer*>(active);
+        if (fileBuffer) {
+            fileBuffer->LoadFile(m_fileName);
+        }
     }
     window->Show(true);
     return true;

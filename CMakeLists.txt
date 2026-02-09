@@ -34,7 +34,6 @@ add_executable(${APP_NAME_LOWERCASE}
     src/gui/windows/main/buffers/abstractfilebuffer.cpp
     src/gui/windows/main/buffers/richfilebuffer.cpp
     src/gui/windows/main/mainwindow.cpp
-    src/gui/windows/main/menubar.cpp
     src/gui/windows/main/screen.cpp
     src/main.cpp
 )

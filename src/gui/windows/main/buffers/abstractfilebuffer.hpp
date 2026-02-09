@@ -16,14 +16,12 @@ namespace Buffers {
  */
 class AbstractFileBuffer : public AbstractBuffer {
    public:
-    AbstractFileBuffer(wxWindow* parent, Ez2note::Config& config,
-                       const wxString& filePath = "");
+    AbstractFileBuffer(wxWindow* parent, wxFrame* mainFrame,
+                       Ez2note::Config& config, const wxString& filePath = "");
     virtual ~AbstractFileBuffer() = default;
 
     virtual void Undo() = 0;
     virtual void Redo() = 0;
-    virtual void SetShowLineNumbers(bool show) = 0;
-    virtual void SetWordWrap(bool wrap) = 0;
     virtual bool IsModified() const = 0;
 
     virtual bool LoadFile(const wxString& path) = 0;
@@ -35,6 +33,7 @@ class AbstractFileBuffer : public AbstractBuffer {
 
    protected:
     wxString filePath;
+    wxFrame* mainFrame;
 };
 
 }  // namespace Buffers

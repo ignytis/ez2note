@@ -5,6 +5,9 @@
 
 #include "abstractfilebuffer.hpp"
 
+#define ID_MENU_VIEW_TOGGLE_LINE_NUMBERS 101
+#define ID_MENU_VIEW_TOGGLE_WORD_WRAP 102
+
 namespace Ez2note {
 namespace Gui {
 namespace Windows {
@@ -17,15 +20,15 @@ namespace Buffers {
  */
 class RichFileBuffer : public AbstractFileBuffer {
    public:
-    RichFileBuffer(wxWindow* parent, Ez2note::Config& config,
-                   const wxString& filePath = "");
+    RichFileBuffer(wxWindow* parent, wxFrame* mainFrame,
+                   Ez2note::Config& config, const wxString& filePath = "");
     virtual ~RichFileBuffer() = default;
 
     // AbstractFileBuffer implementation
     void Undo() override;
     void Redo() override;
-    void SetShowLineNumbers(bool show) override;
-    void SetWordWrap(bool wrap) override;
+    void SetShowLineNumbers(bool show);
+    void SetWordWrap(bool wrap);
     bool IsModified() const override;
 
     bool LoadFile(const wxString& path) override;
@@ -36,6 +39,9 @@ class RichFileBuffer : public AbstractFileBuffer {
     AbstractMenu* GetMenu() override;
 
     // Event handlers
+    void OnShow(wxShowEvent& event);  // on buffer shown
+    void OnNew(wxCommandEvent& event);
+    void OnOpen(wxCommandEvent& event);
     void OnSave(wxCommandEvent& event);
     void OnSaveAs(wxCommandEvent& event);
     void OnUndo(wxCommandEvent& event);

@@ -4,10 +4,12 @@
 
 using namespace Ez2note::Gui::Windows::Main::Buffers;
 
-AbstractFileBuffer::AbstractFileBuffer(wxWindow* parent,
+AbstractFileBuffer::AbstractFileBuffer(wxWindow* parent, wxFrame* mainFrame,
                                        Ez2note::Config& config,
                                        const wxString& filePath)
-    : AbstractBuffer(parent, config), filePath(filePath) {}
+    : AbstractBuffer(parent, config),
+      filePath(filePath),
+      mainFrame(mainFrame) {}
 
 bool AbstractFileBuffer::HasFile() const { return !filePath.IsEmpty(); }
 

@@ -24,23 +24,18 @@ class Screen : public wxPanel {
     Screen(wxWindow* parent, Ez2note::Config& config);
     virtual ~Screen();
 
-    Buffers::AbstractBuffer* OpenNewFile();
-    Buffers::AbstractBuffer* OpenFile(const wxString& filePath);
+    void AddBuffer(Buffers::AbstractBuffer* buffer);
     void CloseBuffer(Buffers::AbstractBuffer* buffer);
 
     Buffers::AbstractBuffer* GetActiveBuffer() const;
     void SetActiveBuffer(Buffers::AbstractBuffer* buffer);
 
-    // Forwarding methods
-    void Undo();
-    void Redo();
-    void SetShowLineNumbers(bool show);
-    void SetWordWrap(bool wrap);
-    bool IsModified() const;
-
    private:
     void UpdateLayout();
 
+    void OnBufferChanged(wxCommandEvent& event);
+
+    wxFrame* mainWindow;  // Main Window
     std::vector<Buffers::AbstractBuffer*> buffers;
     Buffers::AbstractBuffer* activeBuffer;
     Ez2note::Config& config;

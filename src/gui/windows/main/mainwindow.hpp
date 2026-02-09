@@ -4,7 +4,6 @@
 #include <wx/wx.h>
 
 #include "../../../config.hpp"
-#include "buffers/richfilebuffer.hpp"
 #include "screen.hpp"
 
 namespace Ez2note {
@@ -15,12 +14,10 @@ namespace Main {
 class MainWindow : public wxFrame {
    public:
     MainWindow(Ez2note::Config& config);
-    void OpenFile(const wxString& filePath);
+    Screen* GetScreen() const { return screen; }
 
    private:
     // Menu -> File
-    void OnNew(wxCommandEvent& event);
-    void OnOpen(wxCommandEvent& event);
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
 
@@ -29,9 +26,6 @@ class MainWindow : public wxFrame {
 
     Screen* screen;
     Ez2note::Config& config;
-
-    // Track currently bound buffer to unbind events later
-    Ez2note::Gui::Windows::Main::Buffers::RichFileBuffer* currentBoundBuffer;
 };
 
 }  // namespace Main

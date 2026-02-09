@@ -1,9 +1,0 @@
-#ifndef GUI_WINDOWS_MAIN_MENUBAR_HPP
-#define GUI_WINDOWS_MAIN_MENUBAR_HPP
-
-#define ID_MENU_VIEW_TOGGLE_LINE_NUMBERS 101
-#define ID_MENU_VIEW_TOGGLE_WORD_WRAP 102
-
-// Menu bar class has been moved to RichFileBuffer
-
-#endif  // GUI_WINDOWS_MAIN_MENUBAR_HPP
