@@ -4,8 +4,6 @@
 
 #include "../../../../constants.hpp"
 #include "../../findreplace/findreplacedialog.hpp"
-#include "../mainwindow.hpp"
-#include "../screen.hpp"
 
 using namespace Ez2note::Gui::Windows::Main::Buffers;
 using Ez2note::Gui::Windows::AbstractMenu;
@@ -137,10 +135,10 @@ void RichFileBuffer::OnNew(wxCommandEvent& event) {
     if (IsModified()) {
         switch (showDocumentModifiedDialog()) {
             case wxYES: {
-                if (!HasFile()) {
-                    OnSaveAs(event);
-                } else {
+                if (HasFile()) {
                     SaveFile();
+                } else {
+                    OnSaveAs(event);
                 }
                 break;
             }
@@ -149,25 +147,19 @@ void RichFileBuffer::OnNew(wxCommandEvent& event) {
         }
     }
 
-    Ez2note::Gui::Windows::Main::MainWindow* mw =
-        dynamic_cast<Ez2note::Gui::Windows::Main::MainWindow*>(mainFrame);
-    if (mw) {
-        Buffers::RichFileBuffer* newBuffer =
-            new Buffers::RichFileBuffer(mw->GetScreen(), mw, config);
-        // TODO: do NOT create buffer. Contents of current buffer should be used
-        // instead
-        mw->GetScreen()->AddBuffer(newBuffer);
-    }
+    textEdit->ClearAll();
+    textEdit->SetModified(false);
+    filePath = "";
 }
 
 void RichFileBuffer::OnOpen(wxCommandEvent& event) {
     if (IsModified()) {
         switch (showDocumentModifiedDialog()) {
             case wxYES: {
-                if (!HasFile()) {
-                    OnSaveAs(event);
-                } else {
+                if (HasFile()) {
                     SaveFile();
+                } else {
+                    OnSaveAs(event);
                 }
                 break;
             }
@@ -181,25 +173,15 @@ void RichFileBuffer::OnOpen(wxCommandEvent& event) {
 
     if (openFileDialog.ShowModal() == wxID_CANCEL) return;
 
-    Ez2note::Gui::Windows::Main::MainWindow* mw =
-        dynamic_cast<Ez2note::Gui::Windows::Main::MainWindow*>(mainFrame);
-    if (mw) {
-        Buffers::RichFileBuffer* newBuffer = new Buffers::RichFileBuffer(
-            mw->GetScreen(), mw, config, openFileDialog.GetPath());
-        // TODO: do NOT create buffer. Contents of current buffer should be used
-        // instead
-        mw->GetScreen()->AddBuffer(newBuffer);
-    }
+    filePath = openFileDialog.GetPath();
+    textEdit->LoadFile(filePath);
 }
 
 void RichFileBuffer::OnSave(wxCommandEvent& event) {
-    if (!HasFile()) {
-        OnSaveAs(event);
-    } else {
+    if (HasFile()) {
         SaveFile();
-        // TODO: send event to mainWindow in order to update the status bar
-        // SetStatusText(wxString::Format("File saved")); // No access to
-        // StatusBar here easily
+    } else {
+        OnSaveAs(event);
     }
 }
 
