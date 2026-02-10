@@ -85,6 +85,8 @@ bool RichFileBuffer::SaveFileAs(const wxString& path) {
 void RichFileBuffer::OnShow(wxShowEvent& event) {
     if (event.GetEventObject() != this) return;
 
+    // TODO: is it really "on show event"? Or should be more like buffer
+    // creation / deletion or activation / deactivation?
     if (event.IsShown()) {
         // Bind menu events
         this->mainFrame->Bind(wxEVT_MENU, &RichFileBuffer::OnNew, this,
@@ -100,7 +102,7 @@ void RichFileBuffer::OnShow(wxShowEvent& event) {
         this->mainFrame->Bind(wxEVT_MENU, &RichFileBuffer::OnRedo, this,
                               wxID_REDO);
         this->mainFrame->Bind(wxEVT_MENU, &RichFileBuffer::OnFindReplace, this,
-                              100);  // 100 is ID_MENU_EDIT_FIND_REPLACE
+                              ID_MENU_EDIT_FIND_REPLACE);
         this->mainFrame->Bind(wxEVT_MENU, &RichFileBuffer::OnToggleLineNumbers,
                               this, ID_MENU_VIEW_TOGGLE_LINE_NUMBERS);
         this->mainFrame->Bind(wxEVT_MENU, &RichFileBuffer::OnToggleWordWrap,
