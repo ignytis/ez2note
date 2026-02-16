@@ -59,6 +59,9 @@ class RichFileBuffer : public AbstractFileBuffer {
     void OnToggleWordWrap(wxCommandEvent& event);
     void OnSplitHorizontal(wxCommandEvent& event);
     void OnSplitVertical(wxCommandEvent& event);
+    void OnTextEditClick(wxMouseEvent& event);
+    void OnTextEditFocus(wxFocusEvent& event);
+    void SetFocusToBuffer();
 
     class MenuBar : public AbstractMenu {
        public:

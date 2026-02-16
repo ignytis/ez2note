@@ -77,14 +77,14 @@ void Screen::SplitBuffer(Buffers::AbstractBuffer* buffer,
     // be Center? Or just use docking. Default docking is fine for now.
 
     m_mgr.AddPane(newBuffer, info);
-    AddBuffer(newBuffer);
+    buffers.push_back(newBuffer);
     m_mgr.Update();
 }
 
 void Screen::CloseBuffer(Buffers::AbstractBuffer* buffer) {
     // Find and remove from vector
     for (std::vector<Buffers::AbstractBuffer*>::iterator it = buffers.begin();
-        it != buffers.end(); ++it) {
+         it != buffers.end(); ++it) {
         if (*it == buffer) {
             buffers.erase(it);
             break;

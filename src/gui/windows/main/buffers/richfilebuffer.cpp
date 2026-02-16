@@ -38,6 +38,13 @@ RichFileBuffer::RichFileBuffer(wxWindow* parent, wxFrame* mainFrame,
 
     Bind(EZ_EVT_BUFFER_ACTIVATED, &RichFileBuffer::OnBufferActivated, this);
     Bind(EZ_EVT_BUFFER_DEACTIVATED, &RichFileBuffer::OnBufferDeactivated, this);
+
+    // Bind click and focus events to activate buffer
+    textEdit->Bind(wxEVT_LEFT_DOWN, &RichFileBuffer::OnTextEditClick, this);
+    textEdit->Bind(wxEVT_SET_FOCUS, &RichFileBuffer::OnTextEditFocus, this);
+    // Also bind to self just in case
+    Bind(wxEVT_LEFT_DOWN, &RichFileBuffer::OnTextEditClick, this);
+    Bind(wxEVT_SET_FOCUS, &RichFileBuffer::OnTextEditFocus, this);
 }
 
 void RichFileBuffer::Undo() { textEdit->Undo(); }
@@ -271,4 +278,23 @@ RichFileBuffer::MenuBar::MenuBar(Ez2note::Config& config) {
     Append(menuEdit, "&Edit");
     Append(menuView, "&View");
     Append(menuHelp, "&Help");
+}
+
+void RichFileBuffer::OnTextEditClick(wxMouseEvent& event) {
+    SetFocusToBuffer();
+    event.Skip();
+}
+
+void RichFileBuffer::OnTextEditFocus(wxFocusEvent& event) {
+    SetFocusToBuffer();
+    event.Skip();
+}
+
+void RichFileBuffer::SetFocusToBuffer() {
+    Screen* screen = dynamic_cast<Screen*>(GetParent());
+    if (screen) {
+        if (screen->GetActiveBuffer() != this) {
+            screen->SetActiveBuffer(this);
+        }
+    }
 }
