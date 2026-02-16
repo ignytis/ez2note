@@ -1,6 +1,7 @@
 #ifndef GUI_WINDOWS_MAIN_SCREEN_HPP
 #define GUI_WINDOWS_MAIN_SCREEN_HPP
 
+#include <wx/aui/aui.h>
 #include <wx/wx.h>
 
 #include <vector>
@@ -25,6 +26,7 @@ class Screen : public wxPanel {
     virtual ~Screen();
 
     void AddBuffer(Buffers::AbstractBuffer* buffer);
+    void SplitBuffer(Buffers::AbstractBuffer* buffer, wxDirection direction);
     void CloseBuffer(Buffers::AbstractBuffer* buffer);
 
     Buffers::AbstractBuffer* GetActiveBuffer() const;
@@ -34,12 +36,14 @@ class Screen : public wxPanel {
     void UpdateLayout();
 
     void OnBufferChanged(wxCommandEvent& event);
+    void OnPaneClose(wxAuiManagerEvent& event);
+    void OnPaneActivated(wxAuiManagerEvent& event);
 
     wxFrame* mainWindow;  // Main Window
     std::vector<Buffers::AbstractBuffer*> buffers;
     Buffers::AbstractBuffer* activeBuffer;
     Ez2note::Config& config;
-    wxBoxSizer* sizer;
+    wxAuiManager m_mgr;
 };
 
 }  // namespace Main

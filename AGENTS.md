@@ -45,7 +45,7 @@
 
 ## Validation of result
 
-- Use multi-threaded building when running `make`
+- Use multi-threaded building when applicable
 - In Unix environments use `./cmd.sh compile` to build the project
 
 ## Project structure

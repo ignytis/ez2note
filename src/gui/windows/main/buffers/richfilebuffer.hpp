@@ -1,12 +1,19 @@
 #ifndef GUI_WINDOWS_MAIN_BUFFERS_RICHFILEBUFFER_HPP
 #define GUI_WINDOWS_MAIN_BUFFERS_RICHFILEBUFFER_HPP
 
+#include <wx/event.h>
 #include <wx/stc/stc.h>
 
 #include "abstractfilebuffer.hpp"
 
+// Define custom events for buffer activation/deactivation
+wxDECLARE_EVENT(EZ_EVT_BUFFER_ACTIVATED, wxCommandEvent);
+wxDECLARE_EVENT(EZ_EVT_BUFFER_DEACTIVATED, wxCommandEvent);
+
 #define ID_MENU_VIEW_TOGGLE_LINE_NUMBERS 101
 #define ID_MENU_VIEW_TOGGLE_WORD_WRAP 102
+#define ID_MENU_VIEW_SPLIT_HORIZONTAL 103
+#define ID_MENU_VIEW_SPLIT_VERTICAL 104
 
 namespace Ez2note {
 namespace Gui {
@@ -39,7 +46,8 @@ class RichFileBuffer : public AbstractFileBuffer {
     AbstractMenu* GetMenu() override;
 
     // Event handlers
-    void OnShow(wxShowEvent& event);  // on buffer shown
+    void OnBufferActivated(wxCommandEvent& event);
+    void OnBufferDeactivated(wxCommandEvent& event);
     void OnNew(wxCommandEvent& event);
     void OnOpen(wxCommandEvent& event);
     void OnSave(wxCommandEvent& event);
@@ -49,6 +57,8 @@ class RichFileBuffer : public AbstractFileBuffer {
     void OnFindReplace(wxCommandEvent& event);
     void OnToggleLineNumbers(wxCommandEvent& event);
     void OnToggleWordWrap(wxCommandEvent& event);
+    void OnSplitHorizontal(wxCommandEvent& event);
+    void OnSplitVertical(wxCommandEvent& event);
 
     class MenuBar : public AbstractMenu {
        public:

@@ -36,6 +36,8 @@ class AbstractFileBuffer : public AbstractBuffer {
     wxFrame* mainFrame;
 };
 
+int showDocumentModifiedDialog();
+
 }  // namespace Buffers
 }  // namespace Main
 }  // namespace Windows

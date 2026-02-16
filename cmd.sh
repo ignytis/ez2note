@@ -3,24 +3,25 @@
 set -eo pipefail
 
 COMMAND=$1
+shift
 
 function compile {
-    make -j`$(nproc)`
+    make -j$(nproc)
 }
 
 function run {
-    ./build/ez2note
+    ./build/ez2note $@
 }
 
 if [ "$COMMAND" = "init" ]; then
-    cmake -DCMAKE_BUILD_TYPE=DEBUG .
+    cmake -DCMAKE_BUILD_TYPE=Debug .
 elif [ "$COMMAND" = "compile" ]; then
     compile
 elif [ "$COMMAND" = "run" ]; then
-    run    
+    run $@
 elif [ "$COMMAND" = "compile-run" ]; then
     compile
-    run
+    run $@
 elif [ "$COMMAND" = "format" ]; then
     find src \( -name '*.cpp' -o -name '*.hpp' \)  | xargs -I % clang-format -i % -style=file
 else

@@ -2,7 +2,16 @@
 
 #include <wx/filename.h>
 
+#include "../../../../constants.hpp"
+
 using namespace Ez2note::Gui::Windows::Main::Buffers;
+
+int Ez2note::Gui::Windows::Main::Buffers::showDocumentModifiedDialog() {
+    return wxMessageBox(
+        "The document has been modified.\nDo you want to save your "
+        "changes?",
+        EZ2NOTE_APP_NAME, wxYES_NO | wxCANCEL);
+}
 
 AbstractFileBuffer::AbstractFileBuffer(wxWindow* parent, wxFrame* mainFrame,
                                        Ez2note::Config& config,

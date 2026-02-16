@@ -2,20 +2,14 @@
 
 #include <wx/msgdlg.h>
 
-#include "../../../../constants.hpp"
 #include "../../findreplace/findreplacedialog.hpp"
+#include "../screen.hpp"
 
 using namespace Ez2note::Gui::Windows::Main::Buffers;
 using Ez2note::Gui::Windows::AbstractMenu;
 
-namespace {
-int showDocumentModifiedDialog() {
-    return wxMessageBox(
-        "The document has been modified.\nDo you want to save your "
-        "changes?",
-        EZ2NOTE_APP_NAME, wxYES_NO | wxCANCEL);
-}
-}  // namespace
+wxDEFINE_EVENT(EZ_EVT_BUFFER_ACTIVATED, wxCommandEvent);
+wxDEFINE_EVENT(EZ_EVT_BUFFER_DEACTIVATED, wxCommandEvent);
 
 RichFileBuffer::RichFileBuffer(wxWindow* parent, wxFrame* mainFrame,
                                Ez2note::Config& config,
@@ -42,7 +36,8 @@ RichFileBuffer::RichFileBuffer(wxWindow* parent, wxFrame* mainFrame,
 
     menuBar = new MenuBar(config);
 
-    Bind(wxEVT_SHOW, &RichFileBuffer::OnShow, this);
+    Bind(EZ_EVT_BUFFER_ACTIVATED, &RichFileBuffer::OnBufferActivated, this);
+    Bind(EZ_EVT_BUFFER_DEACTIVATED, &RichFileBuffer::OnBufferDeactivated, this);
 }
 
 void RichFileBuffer::Undo() { textEdit->Undo(); }
@@ -82,12 +77,8 @@ bool RichFileBuffer::SaveFileAs(const wxString& path) {
     return false;
 }
 
-void RichFileBuffer::OnShow(wxShowEvent& event) {
-    if (event.GetEventObject() != this) return;
-
-    // TODO: is it really "on show event"? Or should be more like buffer
-    // creation / deletion or activation / deactivation?
-    if (event.IsShown()) {
+void RichFileBuffer::OnBufferActivated(wxCommandEvent& event) {
+    if (this->mainFrame) {
         // Bind menu events
         this->mainFrame->Bind(wxEVT_MENU, &RichFileBuffer::OnNew, this,
                               wxID_NEW);
@@ -107,7 +98,16 @@ void RichFileBuffer::OnShow(wxShowEvent& event) {
                               this, ID_MENU_VIEW_TOGGLE_LINE_NUMBERS);
         this->mainFrame->Bind(wxEVT_MENU, &RichFileBuffer::OnToggleWordWrap,
                               this, ID_MENU_VIEW_TOGGLE_WORD_WRAP);
-    } else {
+        this->mainFrame->Bind(wxEVT_MENU, &RichFileBuffer::OnSplitHorizontal,
+                              this, ID_MENU_VIEW_SPLIT_HORIZONTAL);
+        this->mainFrame->Bind(wxEVT_MENU, &RichFileBuffer::OnSplitVertical,
+                              this, ID_MENU_VIEW_SPLIT_VERTICAL);
+    }
+    event.Skip();
+}
+
+void RichFileBuffer::OnBufferDeactivated(wxCommandEvent& event) {
+    if (this->mainFrame) {
         // Unbind menu events
         this->mainFrame->Unbind(wxEVT_MENU, &RichFileBuffer::OnNew, this,
                                 wxID_NEW);
@@ -128,8 +128,11 @@ void RichFileBuffer::OnShow(wxShowEvent& event) {
                                 ID_MENU_VIEW_TOGGLE_LINE_NUMBERS);
         this->mainFrame->Unbind(wxEVT_MENU, &RichFileBuffer::OnToggleWordWrap,
                                 this, ID_MENU_VIEW_TOGGLE_WORD_WRAP);
+        this->mainFrame->Unbind(wxEVT_MENU, &RichFileBuffer::OnSplitHorizontal,
+                                this, ID_MENU_VIEW_SPLIT_HORIZONTAL);
+        this->mainFrame->Unbind(wxEVT_MENU, &RichFileBuffer::OnSplitVertical,
+                                this, ID_MENU_VIEW_SPLIT_VERTICAL);
     }
-
     event.Skip();
 }
 
@@ -218,6 +221,20 @@ void RichFileBuffer::OnToggleWordWrap(wxCommandEvent& event) {
     SetWordWrap(event.IsChecked());
 }
 
+void RichFileBuffer::OnSplitHorizontal(wxCommandEvent& event) {
+    Screen* screen = dynamic_cast<Screen*>(GetParent());
+    if (screen) {
+        screen->SplitBuffer(this, wxBOTTOM);
+    }
+}
+
+void RichFileBuffer::OnSplitVertical(wxCommandEvent& event) {
+    Screen* screen = dynamic_cast<Screen*>(GetParent());
+    if (screen) {
+        screen->SplitBuffer(this, wxRIGHT);
+    }
+}
+
 AbstractMenu* RichFileBuffer::GetMenu() { return menuBar; }
 
 RichFileBuffer::MenuBar::MenuBar(Ez2note::Config& config) {
@@ -243,6 +260,9 @@ RichFileBuffer::MenuBar::MenuBar(Ez2note::Config& config) {
     menuView->AppendCheckItem(ID_MENU_VIEW_TOGGLE_WORD_WRAP, "Word wrap");
     menuView->Check(ID_MENU_VIEW_TOGGLE_WORD_WRAP,
                     config.getBool(CONFIG_KEY_EDITOR_WORD_WRAP));
+    menuView->AppendSeparator();
+    menuView->Append(ID_MENU_VIEW_SPLIT_HORIZONTAL, "Split Horizontal");
+    menuView->Append(ID_MENU_VIEW_SPLIT_VERTICAL, "Split Vertical");
 
     wxMenu* menuHelp = new wxMenu;
     menuHelp->Append(wxID_ABOUT);
