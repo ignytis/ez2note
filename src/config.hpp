@@ -18,6 +18,8 @@ class Config {
    public:
     Config();
     bool getBool(const string& key);
+    /** Sets a boolean value in memory (not persisted to disk). */
+    void setBool(const string& key, bool value);
 
    private:
     map<string, string> kv;

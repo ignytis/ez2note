@@ -32,6 +32,9 @@ class MainWindow : public QMainWindow {
     bool OnSaveAs();
     // Menu -> Edit
     void OnFindReplace();
+    // Menu -> View
+    void OnToggleLineNumbers(bool show);
+    void OnToggleWordWrap(bool wrap);
     // Menu -> Help
     void OnAbout();
 

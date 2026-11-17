@@ -68,3 +68,7 @@ bool Config::getBool(const string& key) {
     transform(val.begin(), val.end(), val.begin(), ::tolower);
     return val == CONFIG_VALUE_BOOL_TRUE;
 }
+
+void Config::setBool(const string& key, bool value) {
+    kv[key] = value ? CONFIG_VALUE_BOOL_TRUE : CONFIG_VALUE_BOOL_FALSE;
+}

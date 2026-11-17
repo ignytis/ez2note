@@ -45,10 +45,10 @@ MainWindow::MainWindow(Ez2note::Config& config) : config(config) {
     connect(menuBar->actionFindReplace, &QAction::triggered, this,
             &MainWindow::OnFindReplace);
     // Menu -> View
-    connect(menuBar->actionToggleLineNumbers, &QAction::toggled, screen,
-            &Screen::SetShowLineNumbers);
-    connect(menuBar->actionToggleWordWrap, &QAction::toggled, screen,
-            &Screen::SetWordWrap);
+    connect(menuBar->actionToggleLineNumbers, &QAction::toggled, this,
+            &MainWindow::OnToggleLineNumbers);
+    connect(menuBar->actionToggleWordWrap, &QAction::toggled, this,
+            &MainWindow::OnToggleWordWrap);
     // Menu -> Help
     connect(menuBar->actionAbout, &QAction::triggered, this,
             &MainWindow::OnAbout);
@@ -112,6 +112,17 @@ bool MainWindow::OnSaveAs() {
     statusBar()->showMessage(ok ? QString("File saved to '%1'").arg(path)
                                 : "Failed to save the file");
     return ok;
+}
+
+void MainWindow::OnToggleLineNumbers(bool show) {
+    // Remember the choice, so that buffers opened later use it as well
+    config.setBool(CONFIG_KEY_EDITOR_SHOW_LINE_NUMBERS, show);
+    screen->SetShowLineNumbers(show);
+}
+
+void MainWindow::OnToggleWordWrap(bool wrap) {
+    config.setBool(CONFIG_KEY_EDITOR_WORD_WRAP, wrap);
+    screen->SetWordWrap(wrap);
 }
 
 void MainWindow::OnAbout() {
