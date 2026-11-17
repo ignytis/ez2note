@@ -1,46 +1,47 @@
 #include "filebuffer.hpp"
 
-#include <wx/filename.h>
+#include <QFile>
+#include <QFileInfo>
 
 using namespace Ez2note::Gui::Windows::Main::Buffers;
 
-FileBuffer::FileBuffer(wxWindow* parent, Ez2note::Config& config,
-                       const wxString& filePath)
+FileBuffer::FileBuffer(QWidget* parent, Ez2note::Config& config,
+                       const QString& filePath)
     : AbstractBuffer(parent, config), filePath(filePath) {
-    if (!filePath.IsEmpty()) {
+    if (!filePath.isEmpty()) {
         LoadFile(filePath);
     }
 }
 
-bool FileBuffer::LoadFile(const wxString& path) {
-    if (textEdit->LoadFile(path)) {
-        filePath = path;
-        return true;
-    }
-    return false;
+bool FileBuffer::LoadFile(const QString& path) {
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly)) return false;
+    textEdit->setPlainText(QString::fromUtf8(file.readAll()));
+    textEdit->document()->setModified(false);
+    filePath = path;
+    return true;
+}
+
+bool FileBuffer::WriteFile(const QString& path) {
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) return false;
+    file.write(textEdit->toPlainText().toUtf8());
+    textEdit->document()->setModified(false);
+    return true;
 }
 
 bool FileBuffer::SaveFile() {
-    if (filePath.IsEmpty()) {
-        return false;
-    }
-    return textEdit->SaveFile(filePath);
+    return filePath.isEmpty() ? false : WriteFile(filePath);
 }
 
-bool FileBuffer::SaveFileAs(const wxString& path) {
-    if (textEdit->SaveFile(path)) {
-        filePath = path;
-        return true;
-    }
-    return false;
+bool FileBuffer::SaveFileAs(const QString& path) {
+    if (!WriteFile(path)) return false;
+    filePath = path;
+    return true;
 }
 
-bool FileBuffer::HasFile() const { return !filePath.IsEmpty(); }
+bool FileBuffer::HasFile() const { return !filePath.isEmpty(); }
 
-wxString FileBuffer::GetTitle() const {
-    if (filePath.IsEmpty()) {
-        return "Untitled";
-    }
-    wxFileName fileName(filePath);
-    return fileName.GetFullName();
+QString FileBuffer::GetTitle() const {
+    return filePath.isEmpty() ? "Untitled" : QFileInfo(filePath).fileName();
 }

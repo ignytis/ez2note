@@ -1,9 +1,8 @@
 #ifndef GUI_WINDOWS_MAIN_SCREEN_HPP
 #define GUI_WINDOWS_MAIN_SCREEN_HPP
 
-#include <wx/wx.h>
-
-#include <vector>
+#include <QStackedWidget>
+#include <QString>
 
 #include "../../../config.hpp"
 #include "buffers/abstractbuffer.hpp"
@@ -13,13 +12,15 @@ namespace Gui {
 namespace Windows {
 namespace Main {
 
-class Screen : public wxPanel {
+/** Central widget of the main window. Shows the active buffer. */
+class Screen : public QStackedWidget {
+    Q_OBJECT
+
    public:
-    Screen(wxWindow* parent, Ez2note::Config& config);
-    virtual ~Screen();
+    Screen(QWidget* parent, Ez2note::Config& config);
 
     Buffers::AbstractBuffer* OpenNewFile();
-    Buffers::AbstractBuffer* OpenFile(const wxString& filePath);
+    Buffers::AbstractBuffer* OpenFile(const QString& filePath);
     void CloseBuffer(Buffers::AbstractBuffer* buffer);
 
     Buffers::AbstractBuffer* GetActiveBuffer() const;
@@ -33,12 +34,7 @@ class Screen : public wxPanel {
     bool IsModified() const;
 
    private:
-    void UpdateLayout();
-
-    std::vector<Buffers::AbstractBuffer*> buffers;
-    Buffers::AbstractBuffer* activeBuffer;
     Ez2note::Config& config;
-    wxBoxSizer* sizer;
 };
 
 }  // namespace Main

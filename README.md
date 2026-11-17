@@ -27,7 +27,7 @@ See [docs/guide/](docs/guide/).
 ### Prerequisites
 
 - C++ compiler
-- wxWidgets development library
+- Qt 6 development libraries (Widgets module)
 - CMake >= 3.16
 
 ## Linux
@@ -43,7 +43,7 @@ cmake -DCMAKE_BUILD_TYPE=DEBUG .
 Open the project as a CMake project in Visual Studio. It should generate the project files.
 To build the project, use the `Build` menu.
 
-Dependencies (like wxWidgets) could be installed using vcpkg.
+Dependencies (like Qt 6) could be installed using vcpkg.
 
 ### Building
 

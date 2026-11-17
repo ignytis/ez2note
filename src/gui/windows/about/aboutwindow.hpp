@@ -1,17 +1,19 @@
 #ifndef GUI_WINDOWS_ABOUT_ABOUTWINDOW_HPP
 #define GUI_WINDOWS_ABOUT_ABOUTWINDOW_HPP
 
-#include <wx/wx.h>
+#include <QDialog>
 
 namespace Ez2note {
 namespace Gui {
 namespace Windows {
 namespace About {
 
-class AboutWindow : public wxDialog {
+/** "About" dialog with version, license and used libraries. */
+class AboutWindow : public QDialog {
+    Q_OBJECT
+
    public:
-    AboutWindow(wxWindow* parent);
-    void OnClose(wxCommandEvent& event);
+    explicit AboutWindow(QWidget* parent);
 };
 
 }  // namespace About
@@ -19,4 +21,4 @@ class AboutWindow : public wxDialog {
 }  // namespace Gui
 }  // namespace Ez2note
 
-#endif  // GUI_WINDOWS_ABOUT_ABOUT_HPP
+#endif  // GUI_WINDOWS_ABOUT_ABOUTWINDOW_HPP

@@ -20,9 +20,9 @@ include(FetchContent)
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz)
 FetchContent_MakeAvailable(json)
 
-find_package(wxWidgets COMPONENTS stc core base REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
 
-include(${wxWidgets_USE_FILE})
+set(CMAKE_AUTOMOC ON)
 
 add_executable(${APP_NAME_LOWERCASE}
     src/app.cpp
@@ -30,6 +30,7 @@ add_executable(${APP_NAME_LOWERCASE}
     src/gui/windows/about/aboutwindow.cpp
     src/gui/windows/findreplace/findreplacedialog.cpp
     src/gui/windows/main/buffers/abstractbuffer.cpp
+    src/gui/windows/main/buffers/codeeditor.cpp
     src/gui/windows/main/buffers/filebuffer.cpp
     src/gui/windows/main/mainwindow.cpp
     src/gui/windows/main/menubar.cpp
@@ -42,7 +43,7 @@ if(WIN32)
 endif()
 
 target_include_directories(${APP_NAME_LOWERCASE} PRIVATE src)
-target_link_libraries(${APP_NAME_LOWERCASE} PRIVATE wxWidgets::wxWidgets nlohmann_json::nlohmann_json)
+target_link_libraries(${APP_NAME_LOWERCASE} PRIVATE Qt6::Widgets nlohmann_json::nlohmann_json)
 
 add_compile_definitions(APP_VERSION="${APP_VERSION}")
 

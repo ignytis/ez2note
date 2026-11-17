@@ -1,15 +1,17 @@
 #ifndef APP_HPP
 #define APP_HPP
 
-#include <wx/wx.h>
+#include <QApplication>
 
 #include "config.hpp"
 
 namespace Ez2note {
 
-class App : public wxApp {
+/** Application logic: parses command line, shows main window. */
+class App {
    public:
-    virtual bool OnInit();
+    /** Runs the application's event loop. Returns the exit code. */
+    int Run(QApplication& qtApp);
     Config& getConfig();
 
    private:

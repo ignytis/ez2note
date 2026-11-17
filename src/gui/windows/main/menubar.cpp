@@ -1,40 +1,44 @@
 #include "menubar.hpp"
 
-#include <wx/wx.h>
-
-#include "../findreplace/findreplacedialog.hpp"
+#include <QKeySequence>
+#include <QMenu>
 
 using namespace Ez2note::Gui::Windows::Main;
 
-MenuBar::MenuBar(Ez2note::Config& config) : config(config) {
-    wxMenu* menuFile = new wxMenu;
-    menuFile->Append(wxID_NEW);
-    menuFile->Append(wxID_OPEN);
-    menuFile->Append(wxID_SAVE);
-    menuFile->Append(wxID_SAVEAS);
-    menuFile->AppendSeparator();
-    menuFile->Append(wxID_EXIT);
+MenuBar::MenuBar(Ez2note::Config& config, QWidget* parent)
+    : QMenuBar(parent), config(config) {
+    QMenu* menuFile = addMenu("&File");
+    actionNew = menuFile->addAction("&New");
+    actionNew->setShortcut(QKeySequence::New);
+    actionOpen = menuFile->addAction("&Open...");
+    actionOpen->setShortcut(QKeySequence::Open);
+    actionSave = menuFile->addAction("&Save");
+    actionSave->setShortcut(QKeySequence::Save);
+    actionSaveAs = menuFile->addAction("Save &As...");
+    actionSaveAs->setShortcut(QKeySequence::SaveAs);
+    menuFile->addSeparator();
+    actionExit = menuFile->addAction("E&xit");
+    actionExit->setShortcut(QKeySequence::Quit);
 
-    wxMenu* menuEdit = new wxMenu;
-    menuEdit->Append(wxID_UNDO);
-    menuEdit->Append(wxID_REDO);
-    menuEdit->AppendSeparator();
-    menuEdit->Append(ID_MENU_EDIT_FIND_REPLACE, "Find and Replace...\tCtrl+H");
+    QMenu* menuEdit = addMenu("&Edit");
+    actionUndo = menuEdit->addAction("&Undo");
+    actionUndo->setShortcut(QKeySequence::Undo);
+    actionRedo = menuEdit->addAction("&Redo");
+    actionRedo->setShortcut(QKeySequence::Redo);
+    menuEdit->addSeparator();
+    actionFindReplace = menuEdit->addAction("Find and Replace...");
+    actionFindReplace->setShortcut(QKeySequence("Ctrl+H"));
 
-    wxMenu* menuView = new wxMenu;
-    menuView->AppendCheckItem(ID_MENU_VIEW_TOGGLE_LINE_NUMBERS,
-                              "Show line numbers");
-    menuView->Check(ID_MENU_VIEW_TOGGLE_LINE_NUMBERS,
-                    config.getBool(CONFIG_KEY_EDITOR_SHOW_LINE_NUMBERS));
-    menuView->AppendCheckItem(ID_MENU_VIEW_TOGGLE_WORD_WRAP, "Word wrap");
-    menuView->Check(ID_MENU_VIEW_TOGGLE_WORD_WRAP,
-                    config.getBool(CONFIG_KEY_EDITOR_WORD_WRAP));
+    QMenu* menuView = addMenu("&View");
+    actionToggleLineNumbers = menuView->addAction("Show line numbers");
+    actionToggleLineNumbers->setCheckable(true);
+    actionToggleLineNumbers->setChecked(
+        config.getBool(CONFIG_KEY_EDITOR_SHOW_LINE_NUMBERS));
+    actionToggleWordWrap = menuView->addAction("Word wrap");
+    actionToggleWordWrap->setCheckable(true);
+    actionToggleWordWrap->setChecked(
+        config.getBool(CONFIG_KEY_EDITOR_WORD_WRAP));
 
-    wxMenu* menuHelp = new wxMenu;
-    menuHelp->Append(wxID_ABOUT);
-
-    Append(menuFile, "&File");
-    Append(menuEdit, "&Edit");
-    Append(menuView, "&View");
-    Append(menuHelp, "&Help");
+    QMenu* menuHelp = addMenu("&Help");
+    actionAbout = menuHelp->addAction("&About");
 }

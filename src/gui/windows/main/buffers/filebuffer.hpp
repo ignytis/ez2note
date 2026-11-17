@@ -1,6 +1,8 @@
 #ifndef GUI_WINDOWS_MAIN_BUFFERS_FILEBUFFER_HPP
 #define GUI_WINDOWS_MAIN_BUFFERS_FILEBUFFER_HPP
 
+#include <QString>
+
 #include "abstractbuffer.hpp"
 
 namespace Ez2note {
@@ -9,22 +11,27 @@ namespace Windows {
 namespace Main {
 namespace Buffers {
 
+/** Buffer which is backed by a file on disk (or is a new unsaved file). */
 class FileBuffer : public AbstractBuffer {
+    Q_OBJECT
+
    public:
-    FileBuffer(wxWindow* parent, Ez2note::Config& config,
-               const wxString& filePath = "");
+    FileBuffer(QWidget* parent, Ez2note::Config& config,
+               const QString& filePath = "");
     virtual ~FileBuffer() = default;
 
-    bool LoadFile(const wxString& path);
+    bool LoadFile(const QString& path);
     bool SaveFile();
-    bool SaveFileAs(const wxString& path);
+    bool SaveFileAs(const QString& path);
     bool HasFile() const;
 
     // Override from AbstractBuffer
-    wxString GetTitle() const override;
+    QString GetTitle() const override;
 
    private:
-    wxString filePath;
+    bool WriteFile(const QString& path);
+
+    QString filePath;
 };
 
 }  // namespace Buffers

@@ -10,8 +10,8 @@ Source0:        %{name}-%{version}.tar.gz
 
 BuildRequires:  cmake
 BuildRequires:  gcc-c++
-BuildRequires:  wxGTK-devel
-Requires:       wxGTK
+BuildRequires:  qt6-qtbase-devel
+Requires:       qt6-qtbase-gui
 
 %description
 

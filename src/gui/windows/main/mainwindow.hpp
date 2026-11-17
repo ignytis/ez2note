@@ -1,7 +1,9 @@
 #ifndef GUI_WINDOWS_MAIN_MAINWINDOW_HPP
 #define GUI_WINDOWS_MAIN_MAINWINDOW_HPP
 
-#include <wx/wx.h>
+#include <QCloseEvent>
+#include <QMainWindow>
+#include <QString>
 
 #include "../../../config.hpp"
 #include "screen.hpp"
@@ -11,34 +13,37 @@ namespace Gui {
 namespace Windows {
 namespace Main {
 
-class MainWindow : public wxFrame {
+/** The main application window. */
+class MainWindow : public QMainWindow {
+    Q_OBJECT
+
    public:
     MainWindow(Ez2note::Config& config);
-    void OpenFile(const wxString& filePath);
+    void OpenFile(const QString& filePath);
+
+   protected:
+    void closeEvent(QCloseEvent* event) override;
+
+   private slots:
+    // Menu -> File
+    void OnNew();
+    void OnOpen();
+    bool OnSave();
+    bool OnSaveAs();
+    // Menu -> Edit
+    void OnFindReplace();
+    // Menu -> Help
+    void OnAbout();
 
    private:
-    // Menu -> File
-    void OnNew(wxCommandEvent& event);
-    void OnOpen(wxCommandEvent& event);
-    void OnSave(wxCommandEvent& event);
-    void OnSaveAs(wxCommandEvent& event);
-    void OnExit(wxCommandEvent& event);
-    // Menu -> Edit
-    void OnUndo(wxCommandEvent& event);
-    void OnRedo(wxCommandEvent& event);
-    void OnFindReplace(wxCommandEvent& event);
-    // Menu -> View
-    void OnToggleLineNumbers(wxCommandEvent& event);
-    void OnToggleWordWrap(wxCommandEvent& event);
-    // Menu -> Help
-    void OnAbout(wxCommandEvent& event);
-
-    void OnClose(wxCloseEvent& event);
+    /**
+     * Asks to save unsaved changes.
+     * @return false if the user cancelled the operation.
+     */
+    bool ConfirmDiscardChanges();
 
     Screen* screen;
     Ez2note::Config& config;
-
-    wxDECLARE_EVENT_TABLE();
 };
 
 }  // namespace Main

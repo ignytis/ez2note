@@ -39,3 +39,6 @@ _deps
 CMakeUserPresets.json
 
 .cache
+# Qt
+.qt/
+ez2note_autogen/

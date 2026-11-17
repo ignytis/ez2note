@@ -1,67 +1,55 @@
 #include "aboutwindow.hpp"
 
-#include <wx/button.h>
-#include <wx/hyperlink.h>
-#include <wx/sizer.h>
-#include <wx/stattext.h>
-#include <wx/wx.h>
+#include <QDialogButtonBox>
+#include <QLabel>
+#include <QVBoxLayout>
 
 #include "../../../constants.hpp"
 
 using namespace Ez2note::Gui::Windows::About;
 
-AboutWindow::AboutWindow(wxWindow* parent)
-    : wxDialog(parent, wxID_ANY,
-               wxString::Format("About %s", EZ2NOTE_APP_NAME)) {
-    wxPanel* panel = new wxPanel(this, wxID_ANY);
-    wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
+namespace {
 
-    wxStaticText* appName = new wxStaticText(
-        panel, wxID_ANY,
-        wxString::Format("%s %s", EZ2NOTE_APP_NAME, EZ2NOTE_APP_VERSION));
-    vbox->Add(appName, 0, wxALIGN_CENTER | wxTOP, 10);
-
-    wxStaticText* appDescription =
-        new wxStaticText(panel, wxID_ANY, EZ2NOTE_APP_DESCRIPTION);
-    vbox->Add(appDescription, 0, wxALIGN_CENTER | wxTOP, 10);
-
-    wxHyperlinkCtrl* homepage = new wxHyperlinkCtrl(
-        panel, wxID_ANY, EZ2NOTE_APP_HOMEPAGE, EZ2NOTE_APP_HOMEPAGE);
-    vbox->Add(homepage, 0, wxALIGN_CENTER | wxTOP, 10);
-
-    wxHyperlinkCtrl* license = new wxHyperlinkCtrl(
-        panel, wxID_ANY, "Licensed under GNU GPL v3",
-        "https://github.com/ignytis/ez2note/blob/main/LICENSE");
-    vbox->Add(license, 0, wxALIGN_CENTER | wxTOP, 10);
-
-    wxStaticText* libraries =
-        new wxStaticText(panel, wxID_ANY, "Libraries used:");
-    vbox->Add(libraries, 0, wxALIGN_CENTER | wxTOP, 20);
-
-    wxHyperlinkCtrl* wxWidgetsLicense =
-        new wxHyperlinkCtrl(panel, wxID_ANY, wxVERSION_STRING,
-                            "https://wxwidgets.org/about/licence/");
-    vbox->Add(wxWidgetsLicense, 0, wxALIGN_CENTER | wxTOP, 5);
-
-    wxHyperlinkCtrl* jsonLicense =
-        new wxHyperlinkCtrl(panel, wxID_ANY, "nlohmann/json",
-                            "https://github.com/nlohmann/json/blob/"
-                            "develop/LICENSE.MIT");
-    vbox->Add(jsonLicense, 0, wxALIGN_CENTER | wxTOP, 5);
-
-    wxButton* closeButton = new wxButton(panel, wxID_CLOSE);
-    vbox->Add(closeButton, 0, wxALIGN_CENTER | wxTOP | wxBOTTOM, 10);
-
-    panel->SetSizer(vbox);
-
-    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
-    mainSizer->Add(panel, 1, wxEXPAND | wxALL, 10);
-    SetSizerAndFit(mainSizer);
-
-    Connect(wxID_CLOSE, wxEVT_COMMAND_BUTTON_CLICKED,
-            wxCommandEventHandler(AboutWindow::OnClose));
-
-    Centre();
+/** Creates a centered label which can contain clickable links. */
+QLabel* createLabel(const QString& html, QWidget* parent) {
+    QLabel* label = new QLabel(html, parent);
+    label->setAlignment(Qt::AlignCenter);
+    label->setTextFormat(Qt::RichText);
+    label->setOpenExternalLinks(true);
+    return label;
 }
 
-void AboutWindow::OnClose(wxCommandEvent& WXUNUSED(event)) { Close(); }
+}  // namespace
+
+AboutWindow::AboutWindow(QWidget* parent) : QDialog(parent) {
+    setWindowTitle(QString("About %1").arg(EZ2NOTE_APP_NAME));
+
+    QVBoxLayout* layout = new QVBoxLayout(this);
+    layout->setSpacing(10);
+
+    layout->addWidget(createLabel(
+        QString("%1 %2").arg(EZ2NOTE_APP_NAME, EZ2NOTE_APP_VERSION), this));
+    layout->addWidget(createLabel(EZ2NOTE_APP_DESCRIPTION, this));
+    layout->addWidget(createLabel(
+        QString("<a href=\"%1\">%1</a>").arg(EZ2NOTE_APP_HOMEPAGE), this));
+    layout->addWidget(createLabel(
+        "<a href=\"https://github.com/ignytis/ez2note/blob/main/LICENSE\">"
+        "Licensed under GNU GPL v3</a>",
+        this));
+
+    layout->addSpacing(10);
+    layout->addWidget(createLabel("Libraries used:", this));
+    layout->addWidget(createLabel(
+        QString("<a href=\"https://www.qt.io/licensing/\">Qt %1</a>")
+            .arg(QT_VERSION_STR),
+        this));
+    layout->addWidget(
+        createLabel("<a href=\"https://github.com/nlohmann/json/blob/develop/"
+                    "LICENSE.MIT\">nlohmann/json</a>",
+                    this));
+
+    QDialogButtonBox* buttons =
+        new QDialogButtonBox(QDialogButtonBox::Close, this);
+    connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::close);
+    layout->addWidget(buttons);
+}

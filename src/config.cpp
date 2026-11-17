@@ -1,9 +1,8 @@
 #include "config.hpp"
 
 #include <sys/stat.h>
-#include <wx/debug.h>
-#include <wx/stdpaths.h>
 
+#include <QStandardPaths>
 #include <algorithm>
 #include <cstdlib>
 #include <fstream>
@@ -22,9 +21,9 @@ string getAppHomeDir() {
     if (cAppHomeDir) {
         appHomeDir = string(cAppHomeDir);
     } else {
-        appHomeDir = wxStandardPaths::wxStandardPaths::Get()
-                         .GetUserDataDir()
-                         .ToStdString();
+        appHomeDir =
+            QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)
+                .toStdString();
     }
     return appHomeDir;
 }

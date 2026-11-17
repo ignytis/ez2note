@@ -1,40 +1,30 @@
 #include "app.hpp"
 
-#include <wx/cmdline.h>
+#include <QCommandLineParser>
+#include <QString>
+#include <QStringList>
 
+#include "constants.hpp"
 #include "gui/windows/main/mainwindow.hpp"
 
 using namespace Ez2note;
 using namespace Ez2note::Gui::Windows::Main;
 
-static const wxCmdLineEntryDesc CMD_LINE_DESC[] = {
-    {wxCMD_LINE_PARAM, NULL, NULL, "input file", wxCMD_LINE_VAL_STRING,
-     wxCMD_LINE_PARAM_OPTIONAL},
-    {wxCMD_LINE_SWITCH, "h", "help", "show this help message",
-     wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP},
-    {wxCMD_LINE_NONE}};
+int App::Run(QApplication& qtApp) {
+    QCommandLineParser parser;
+    parser.setApplicationDescription(EZ2NOTE_APP_DESCRIPTION);
+    parser.addHelpOption();
+    parser.addPositionalArgument("input file", "input file", "[input file]");
+    parser.process(qtApp);
 
-bool App::OnInit() {
-    wxCmdLineParser parser(CMD_LINE_DESC, argc, argv);
-    parser.SetSwitchChars(wxT("-"));
+    const QStringList args = parser.positionalArguments();
 
-    int ret = parser.Parse(true);
-    if (ret != 0) {
-        // -1 means error, 1 means help was shown
-        return false;
+    MainWindow window(config);
+    if (!args.isEmpty()) {
+        window.OpenFile(args.first());
     }
-
-    wxString m_fileName;
-    if (parser.GetParamCount() > 0) {
-        m_fileName = parser.GetParam(0);
-    }
-
-    MainWindow* window = new MainWindow(config);
-    if (!m_fileName.IsEmpty()) {
-        window->OpenFile(m_fileName);
-    }
-    window->Show(true);
-    return true;
+    window.show();
+    return QApplication::exec();
 }
 
 Config& App::getConfig() { return config; }

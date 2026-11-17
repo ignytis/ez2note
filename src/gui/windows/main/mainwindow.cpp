@@ -1,8 +1,10 @@
 #include "mainwindow.hpp"
 
-#include <wx/display.h>
-#include <wx/stc/stc.h>
-#include <wx/wx.h>
+#include <QFileDialog>
+#include <QGuiApplication>
+#include <QMessageBox>
+#include <QScreen>
+#include <QStatusBar>
 
 #include "../../../constants.hpp"
 #include "../about/aboutwindow.hpp"
@@ -14,182 +16,120 @@ using namespace Ez2note::Gui::Windows::About;
 using namespace Ez2note::Gui::Windows::FindReplace;
 using namespace Ez2note::Gui::Windows::Main;
 
-/* clang-format off */
-wxBEGIN_EVENT_TABLE(MainWindow, wxFrame)
-    // Menu -> File
-    EVT_MENU(wxID_NEW, MainWindow::OnNew)
-    EVT_MENU(wxID_OPEN, MainWindow::OnOpen)
-    EVT_MENU(wxID_SAVE, MainWindow::OnSave)
-    EVT_MENU(wxID_SAVEAS, MainWindow::OnSaveAs)
-    EVT_MENU(wxID_EXIT, MainWindow::OnExit)
-    // Menu -> Edit
-    EVT_MENU(ID_MENU_EDIT_FIND_REPLACE, MainWindow::OnFindReplace)
-    EVT_MENU(wxID_UNDO, MainWindow::OnUndo)
-    EVT_MENU(wxID_REDO, MainWindow::OnRedo)
-    // Menu -> View
-    EVT_MENU(ID_MENU_VIEW_TOGGLE_LINE_NUMBERS, MainWindow::OnToggleLineNumbers)
-    EVT_MENU(ID_MENU_VIEW_TOGGLE_WORD_WRAP, MainWindow::OnToggleWordWrap)
-    // Menu -> Help
-    EVT_MENU(wxID_ABOUT, MainWindow::OnAbout)
-    EVT_CLOSE(MainWindow::OnClose)
-wxEND_EVENT_TABLE()
-    /* clang-format on */
-
-    // a dummy function to make clang-format happy
-    void _main_window_dummy(){};
-
-/**
- * Shows a dialog asking the user if they want to save their changes.
- * @return The user's choice (wxID_YES, wxID_NO, or wxID_CANCEL).
- */
-int showDocumentModifiedDialog() {
-    return wxMessageBox(
-        "The document has been modified.\nDo you want to save your "
-        "changes?",
-        EZ2NOTE_APP_NAME, wxYES_NO | wxCANCEL);
-}
-
-MainWindow::MainWindow(Ez2note::Config& config)
-    : wxFrame(NULL, wxID_ANY, EZ2NOTE_APP_NAME), config(config) {
-#ifdef WIN32
-    // Set icons (Windows)
-    wxIconBundle icons;
-    icons.AddIcon(wxIcon("IDI_APPICON", wxBITMAP_TYPE_ICO_RESOURCE));
-    SetIcons(icons);
-#endif
+MainWindow::MainWindow(Ez2note::Config& config) : config(config) {
+    setWindowTitle(EZ2NOTE_APP_NAME);
 
     // By default, set the window size to 1/2 of the screen size
-    wxDisplay display;
-    this->SetSize(display.GetClientArea().GetSize() / 2);
+    resize(QGuiApplication::primaryScreen()->availableGeometry().size() / 2);
 
-    SetMenuBar(new MenuBar(config));
+    MenuBar* menuBar = new MenuBar(config, this);
+    setMenuBar(menuBar);
 
     screen = new Screen(this, config);
+    setCentralWidget(screen);
 
-    // Create status bar
-    CreateStatusBar();
-    SetStatusText(wxString::Format("Welcome to %s!", EZ2NOTE_APP_NAME));
+    statusBar()->showMessage(QString("Welcome to %1!").arg(EZ2NOTE_APP_NAME));
+
+    // Menu -> File
+    connect(menuBar->actionNew, &QAction::triggered, this, &MainWindow::OnNew);
+    connect(menuBar->actionOpen, &QAction::triggered, this,
+            &MainWindow::OnOpen);
+    connect(menuBar->actionSave, &QAction::triggered, this,
+            &MainWindow::OnSave);
+    connect(menuBar->actionSaveAs, &QAction::triggered, this,
+            &MainWindow::OnSaveAs);
+    connect(menuBar->actionExit, &QAction::triggered, this, &QWidget::close);
+    // Menu -> Edit
+    connect(menuBar->actionUndo, &QAction::triggered, screen, &Screen::Undo);
+    connect(menuBar->actionRedo, &QAction::triggered, screen, &Screen::Redo);
+    connect(menuBar->actionFindReplace, &QAction::triggered, this,
+            &MainWindow::OnFindReplace);
+    // Menu -> View
+    connect(menuBar->actionToggleLineNumbers, &QAction::toggled, screen,
+            &Screen::SetShowLineNumbers);
+    connect(menuBar->actionToggleWordWrap, &QAction::toggled, screen,
+            &Screen::SetWordWrap);
+    // Menu -> Help
+    connect(menuBar->actionAbout, &QAction::triggered, this,
+            &MainWindow::OnAbout);
 
     // Open default new file
     screen->OpenNewFile();
 }
 
-void MainWindow::OnNew(wxCommandEvent& event) {
-    if (screen->IsModified()) {
-        switch (showDocumentModifiedDialog()) {
-            case wxYES:
-                OnSave(event);
-                break;
-            case wxCANCEL:
-                return;
-                break;
-        }
-    }
+bool MainWindow::ConfirmDiscardChanges() {
+    if (!screen->IsModified()) return true;
 
+    QMessageBox::StandardButton choice = QMessageBox::question(
+        this, EZ2NOTE_APP_NAME,
+        "The document has been modified.\nDo you want to save your changes?",
+        QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+    if (choice == QMessageBox::Cancel) return false;
+    return choice == QMessageBox::Save ? OnSave() : true;
+}
+
+void MainWindow::OnNew() {
+    if (!ConfirmDiscardChanges()) return;
     screen->OpenNewFile();
 }
 
-void MainWindow::OnOpen(wxCommandEvent& event) {
-    if (screen->IsModified()) {
-        switch (showDocumentModifiedDialog()) {
-            case wxYES:
-                OnSave(event);
-                break;
-            case wxCANCEL:
-                return;
-                break;
-        }
-    }
+void MainWindow::OnOpen() {
+    if (!ConfirmDiscardChanges()) return;
 
-    wxFileDialog openFileDialog(this, "Open file", "", "", "All files|*",
-                                wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+    QString path =
+        QFileDialog::getOpenFileName(this, "Open file", "", "All files (*)");
+    if (path.isEmpty()) return;
 
-    if (openFileDialog.ShowModal() == wxID_CANCEL) return;
-
-    OpenFile(openFileDialog.GetPath());
+    OpenFile(path);
 }
 
-void MainWindow::OpenFile(const wxString& filePath) {
+void MainWindow::OpenFile(const QString& filePath) {
     screen->OpenFile(filePath);
-    SetStatusText(wxString::Format("File '%s' opened", filePath));
+    statusBar()->showMessage(QString("File '%1' opened").arg(filePath));
 }
 
-void MainWindow::OnSave(wxCommandEvent& event) {
-    Buffers::AbstractBuffer* active = screen->GetActiveBuffer();
-    if (!active) return;
-
-    // Check if it's a file buffer
+bool MainWindow::OnSave() {
     Buffers::FileBuffer* fileBuffer =
-        dynamic_cast<Buffers::FileBuffer*>(active);
-    if (!fileBuffer) return;  // Should handle non-file buffers if any
+        qobject_cast<Buffers::FileBuffer*>(screen->GetActiveBuffer());
+    if (!fileBuffer) return false;
+    if (!fileBuffer->HasFile()) return OnSaveAs();
 
-    if (!fileBuffer->HasFile()) {
-        OnSaveAs(event);
-    } else {
-        fileBuffer->SaveFile();
-        SetStatusText(wxString::Format("File saved"));
-    }
+    bool ok = fileBuffer->SaveFile();
+    statusBar()->showMessage(ok ? "File saved" : "Failed to save the file");
+    return ok;
 }
 
-void MainWindow::OnSaveAs(wxCommandEvent& event) {
-    wxFileDialog saveFileDialog(this, "Save file", "", "",
-                                "Text files (*.txt)|*.txt",
-                                wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+bool MainWindow::OnSaveAs() {
+    Buffers::FileBuffer* fileBuffer =
+        qobject_cast<Buffers::FileBuffer*>(screen->GetActiveBuffer());
+    if (!fileBuffer) return false;
 
-    if (saveFileDialog.ShowModal() == wxID_CANCEL) return;
+    QString path = QFileDialog::getSaveFileName(this, "Save file", "",
+                                                "Text files (*.txt)");
+    if (path.isEmpty()) return false;
 
-    Buffers::AbstractBuffer* active = screen->GetActiveBuffer();
-    if (active) {
-        Buffers::FileBuffer* fileBuffer =
-            dynamic_cast<Buffers::FileBuffer*>(active);
-        if (fileBuffer) {
-            fileBuffer->SaveFileAs(saveFileDialog.GetPath());
-            SetStatusText(wxString::Format("File saved to '%s'",
-                                           saveFileDialog.GetPath()));
-        }
-    }
+    bool ok = fileBuffer->SaveFileAs(path);
+    statusBar()->showMessage(ok ? QString("File saved to '%1'").arg(path)
+                                : "Failed to save the file");
+    return ok;
 }
 
-void MainWindow::OnAbout(wxCommandEvent& event) {
+void MainWindow::OnAbout() {
     AboutWindow* about = new AboutWindow(this);
-    about->ShowWindowModal();
+    about->setAttribute(Qt::WA_DeleteOnClose);
+    about->open();
 }
 
-void MainWindow::OnUndo(wxCommandEvent& event) { screen->Undo(); }
-
-void MainWindow::OnRedo(wxCommandEvent& event) { screen->Redo(); }
-
-void MainWindow::OnFindReplace(wxCommandEvent& event) {
+void MainWindow::OnFindReplace() {
     Buffers::AbstractBuffer* active = screen->GetActiveBuffer();
-    if (active && active->GetTextEdit()) {
-        FindReplaceDialog* findReplace =
-            new FindReplaceDialog(this, active->GetTextEdit());
-        findReplace->Show();
-    }
+    if (!active || !active->GetTextEdit()) return;
+
+    FindReplaceDialog* findReplace =
+        new FindReplaceDialog(this, active->GetTextEdit());
+    findReplace->setAttribute(Qt::WA_DeleteOnClose);
+    findReplace->show();
 }
 
-void MainWindow::OnToggleLineNumbers(wxCommandEvent& event) {
-    screen->SetShowLineNumbers(event.IsChecked());
-}
-
-void MainWindow::OnToggleWordWrap(wxCommandEvent& event) {
-    screen->SetWordWrap(event.IsChecked());
-}
-
-void MainWindow::OnExit(wxCommandEvent& event) { Close(true); }
-
-void MainWindow::OnClose(wxCloseEvent& event) {
-    if (screen->IsModified()) {
-        wxCommandEvent saveEvent(wxEVT_COMMAND_MENU_SELECTED, wxID_SAVE);
-        switch (showDocumentModifiedDialog()) {
-            case wxYES:
-                OnSave(saveEvent);
-                break;
-            case wxCANCEL:
-                return;
-                break;
-        }
-    }
-
-    Destroy();
+void MainWindow::closeEvent(QCloseEvent* event) {
+    ConfirmDiscardChanges() ? event->accept() : event->ignore();
 }

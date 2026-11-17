@@ -1,32 +1,36 @@
 #ifndef GUI_WINDOWS_FINDREPLACE_FINDREPLACEDIALOG_HPP
 #define GUI_WINDOWS_FINDREPLACE_FINDREPLACEDIALOG_HPP
 
-#include <wx/stc/stc.h>
-#include <wx/wx.h>
-
-#define ID_MENU_EDIT_FIND_REPLACE 100
+#include <QDialog>
+#include <QLineEdit>
+#include <QPlainTextEdit>
+#include <QTextDocument>
 
 namespace Ez2note {
 namespace Gui {
 namespace Windows {
 namespace FindReplace {
 
-class FindReplaceDialog : public wxDialog {
+/** Non-modal dialog for finding and replacing text in an editor. */
+class FindReplaceDialog : public QDialog {
+    Q_OBJECT
+
    public:
-    FindReplaceDialog(wxWindow* parent, wxStyledTextCtrl* textEdit);
+    FindReplaceDialog(QWidget* parent, QPlainTextEdit* textEdit);
+
+   private slots:
+    void OnFindNext();
+    void OnFindPrev();
+    void OnReplace();
+    void OnReplaceAll();
 
    private:
-    void OnFindNext(wxCommandEvent& event);
-    void OnFindPrev(wxCommandEvent& event);
-    void OnReplace(wxCommandEvent& event);
-    void OnReplaceAll(wxCommandEvent& event);
-    void OnCancel(wxCommandEvent& event);
+    /** Searches with wrap-around. Returns false if nothing was found. */
+    bool Find(QTextDocument::FindFlags flags);
 
-    wxStyledTextCtrl* textEdit;
-    wxTextCtrl* findText;
-    wxTextCtrl* replaceText;
-
-    wxDECLARE_EVENT_TABLE();
+    QPlainTextEdit* textEdit;
+    QLineEdit* findText;
+    QLineEdit* replaceText;
 };
 
 }  // namespace FindReplace

@@ -2,7 +2,7 @@
 
 ## General instructions
 
-- The project uses wxWidgets framework
+- The project uses Qt 6 (Widgets) framework
 - CMake + GNU Make are used to build the project
 - The compiled binary `ez2note` is located in `build` directory
 
@@ -17,8 +17,6 @@
 - Namespaces are used to organize code into logical units. The structure of namespaces should
   reflect the project's directory structure, e.g.
   `src/gui/windows/main` directory -> `Ez2note::Gui::Windows::Main`
-- Do not delete the `*_dummy()` functions, they are used to prevent clang-format
-  from auto-formatting the code below `wxEND_EVENT_TABLE`
 - Format code using `clang-format` using `./cmd.sh format`
 - Add comments for classes and functions
 

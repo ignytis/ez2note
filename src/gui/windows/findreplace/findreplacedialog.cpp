@@ -1,137 +1,104 @@
 #include "findreplacedialog.hpp"
 
+#include <QFormLayout>
+#include <QHBoxLayout>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QTextCursor>
+#include <QVBoxLayout>
+
 using namespace Ez2note::Gui::Windows::FindReplace;
 
-enum {
-    ID_FIND_TEXT = 1,
-    ID_REPLACE_TEXT,
-    ID_FINDNEXT_BUTTON,
-    ID_FINDPREV_BUTTON,
-    ID_REPLACE_BUTTON,
-    ID_REPLACE_ALL_BUTTON
-};
+FindReplaceDialog::FindReplaceDialog(QWidget* parent, QPlainTextEdit* textEdit)
+    : QDialog(parent),
+      textEdit(textEdit),
+      findText(new QLineEdit(this)),
+      replaceText(new QLineEdit(this)) {
+    setWindowTitle("Find and Replace");
 
-/* clang-format off */
-wxBEGIN_EVENT_TABLE(FindReplaceDialog, wxDialog)
-    EVT_BUTTON(ID_FINDNEXT_BUTTON, FindReplaceDialog::OnFindNext)
-    EVT_BUTTON(ID_FINDPREV_BUTTON, FindReplaceDialog::OnFindPrev)
-    EVT_BUTTON(ID_REPLACE_BUTTON, FindReplaceDialog::OnReplace)
-    EVT_BUTTON(ID_REPLACE_ALL_BUTTON, FindReplaceDialog::OnReplaceAll)
-wxEND_EVENT_TABLE()
-    /* clang-format on */
+    QVBoxLayout* layout = new QVBoxLayout(this);
+    QFormLayout* form = new QFormLayout();
+    form->addRow("Find:", findText);
+    form->addRow("Replace with:", replaceText);
+    layout->addLayout(form);
 
-    // a dummy function to make clang-format happy
-    void _find_replace_dummy(){};
+    QHBoxLayout* buttons = new QHBoxLayout();
+    buttons->addStretch();
+    QPushButton* prev = new QPushButton("Find previous", this);
+    QPushButton* next = new QPushButton("Find next", this);
+    QPushButton* replace = new QPushButton("Replace", this);
+    QPushButton* replaceAll = new QPushButton("Replace All", this);
+    QPushButton* cancel = new QPushButton("Cancel", this);
+    for (QPushButton* b : {prev, next, replace, replaceAll, cancel}) {
+        buttons->addWidget(b);
+    }
+    layout->addLayout(buttons);
 
-FindReplaceDialog::FindReplaceDialog(wxWindow* parent,
-                                     wxStyledTextCtrl* textEdit)
-    : wxDialog(parent, wxID_ANY, "Find and Replace"), textEdit(textEdit) {
-    wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-
-    wxFlexGridSizer* gridSizer = new wxFlexGridSizer(2, 2, 5, 5);
-    gridSizer->AddGrowableCol(1);
-
-    gridSizer->Add(new wxStaticText(this, wxID_ANY, "Find:"), 0,
-                   wxALIGN_CENTER_VERTICAL);
-    findText = new wxTextCtrl(this, ID_FIND_TEXT);
-    gridSizer->Add(findText, 1, wxEXPAND);
-
-    gridSizer->Add(new wxStaticText(this, wxID_ANY, "Replace with:"), 0,
-                   wxALIGN_CENTER_VERTICAL);
-    replaceText = new wxTextCtrl(this, ID_REPLACE_TEXT);
-    gridSizer->Add(replaceText, 1, wxEXPAND);
-
-    sizer->Add(gridSizer, 1, wxEXPAND | wxALL, 10);
-
-    wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
-    buttonSizer->Add(new wxButton(this, ID_FINDPREV_BUTTON, "Find previous"), 0,
-                     wxRIGHT, 5);
-    buttonSizer->Add(new wxButton(this, ID_FINDNEXT_BUTTON, "Find next"), 0,
-                     wxRIGHT, 5);
-    buttonSizer->Add(new wxButton(this, ID_REPLACE_BUTTON, "Replace"), 0,
-                     wxRIGHT, 5);
-    buttonSizer->Add(new wxButton(this, ID_REPLACE_ALL_BUTTON, "Replace All"),
-                     0, wxRIGHT, 5);
-    buttonSizer->Add(new wxButton(this, wxID_CANCEL, "Cancel"), 0);
-
-    sizer->Add(buttonSizer, 0, wxALIGN_RIGHT | wxRIGHT | wxBOTTOM, 10);
-
-    SetSizerAndFit(sizer);
-
-    Connect(wxID_CLOSE, wxEVT_COMMAND_BUTTON_CLICKED,
-            wxCommandEventHandler(FindReplaceDialog::OnCancel));
+    connect(prev, &QPushButton::clicked, this, &FindReplaceDialog::OnFindPrev);
+    connect(next, &QPushButton::clicked, this, &FindReplaceDialog::OnFindNext);
+    connect(replace, &QPushButton::clicked, this,
+            &FindReplaceDialog::OnReplace);
+    connect(replaceAll, &QPushButton::clicked, this,
+            &FindReplaceDialog::OnReplaceAll);
+    connect(cancel, &QPushButton::clicked, this, &QDialog::close);
 }
 
-void FindReplaceDialog::OnFindNext(wxCommandEvent& event) {
-    wxString searchTerm = findText->GetValue();
-    if (searchTerm.IsEmpty()) {
-        return;
-    }
+bool FindReplaceDialog::Find(QTextDocument::FindFlags flags) {
+    QString term = findText->text();
+    if (textEdit->find(term, flags)) return true;
 
-    textEdit->GotoPos(textEdit->GetSelectionEnd() + 1);
-    textEdit->SearchAnchor();
-    int nextPos = textEdit->SearchNext(0, searchTerm);
+    // Wrap around
+    QTextCursor original = textEdit->textCursor();
+    QTextCursor cursor = original;
+    cursor.movePosition(flags & QTextDocument::FindBackward
+                            ? QTextCursor::End
+                            : QTextCursor::Start);
+    textEdit->setTextCursor(cursor);
+    if (textEdit->find(term, flags)) return true;
 
-    if (nextPos != wxSTC_INVALID_POSITION) {
-        textEdit->SetSelection(nextPos, nextPos + searchTerm.Length());
-        textEdit->EnsureCaretVisible();
-    } else {
-        wxMessageBox("Text not found.", "Find", wxOK | wxICON_INFORMATION);
+    textEdit->setTextCursor(original);
+    return false;
+}
+
+void FindReplaceDialog::OnFindNext() {
+    if (findText->text().isEmpty()) return;
+    if (!Find(QTextDocument::FindFlags())) {
+        QMessageBox::information(this, "Find", "Text not found.");
     }
 }
 
-void FindReplaceDialog::OnFindPrev(wxCommandEvent& event) {
-    wxString searchTerm = findText->GetValue();
-    if (searchTerm.IsEmpty()) {
-        return;
-    }
-
-    textEdit->GotoPos(textEdit->GetSelectionStart());
-    textEdit->SearchAnchor();
-    int prevPos = textEdit->SearchPrev(0, searchTerm);
-
-    if (prevPos != wxSTC_INVALID_POSITION) {
-        textEdit->SetSelection(prevPos, prevPos + searchTerm.Length());
-        textEdit->EnsureCaretVisible();
-    } else {
-        wxMessageBox("Text not found.", "Find", wxOK | wxICON_INFORMATION);
+void FindReplaceDialog::OnFindPrev() {
+    if (findText->text().isEmpty()) return;
+    if (!Find(QTextDocument::FindBackward)) {
+        QMessageBox::information(this, "Find", "Text not found.");
     }
 }
 
-void FindReplaceDialog::OnReplace(wxCommandEvent& event) {
-    wxString searchTerm = findText->GetValue();
-    wxString replaceTerm = replaceText->GetValue();
+void FindReplaceDialog::OnReplace() {
+    if (findText->text().isEmpty()) return;
 
-    if (searchTerm.IsEmpty()) {
-        return;
+    QTextCursor cursor = textEdit->textCursor();
+    if (cursor.selectedText() == findText->text()) {
+        cursor.insertText(replaceText->text());
     }
-
-    if (textEdit->GetSelectedText() == searchTerm) {
-        textEdit->ReplaceSelection(replaceTerm);
-    }
-
-    OnFindNext(event);
+    OnFindNext();
 }
 
-void FindReplaceDialog::OnReplaceAll(wxCommandEvent& event) {
-    wxString searchTerm = findText->GetValue();
-    wxString replaceTerm = replaceText->GetValue();
-
-    if (searchTerm.IsEmpty()) {
-        return;
-    }
+void FindReplaceDialog::OnReplaceAll() {
+    QString term = findText->text();
+    if (term.isEmpty()) return;
 
     int count = 0;
-    textEdit->GotoPos(0);
-    textEdit->SearchAnchor();
-
-    while (textEdit->SearchNext(0, searchTerm) != wxSTC_INVALID_POSITION) {
-        textEdit->ReplaceSelection(replaceTerm);
-        count++;
+    QTextCursor cursor(textEdit->document());
+    cursor.beginEditBlock();
+    QTextCursor found = textEdit->document()->find(term, 0);
+    while (!found.isNull()) {
+        found.insertText(replaceText->text());
+        ++count;
+        found = textEdit->document()->find(term, found);
     }
+    cursor.endEditBlock();
 
-    wxMessageBox(wxString::Format("Replaced %d occurrences.", count),
-                 "Replace All", wxOK | wxICON_INFORMATION);
+    QMessageBox::information(this, "Replace All",
+                             QString("Replaced %1 occurrences.").arg(count));
 }
-
-void FindReplaceDialog::OnCancel(wxCommandEvent& event) { Close(); }

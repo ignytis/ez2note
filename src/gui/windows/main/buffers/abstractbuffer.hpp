@@ -1,10 +1,11 @@
 #ifndef GUI_WINDOWS_MAIN_BUFFERS_ABSTRACTBUFFER_HPP
 #define GUI_WINDOWS_MAIN_BUFFERS_ABSTRACTBUFFER_HPP
 
-#include <wx/stc/stc.h>
-#include <wx/wx.h>
+#include <QString>
+#include <QWidget>
 
 #include "../../../../config.hpp"
+#include "codeeditor.hpp"
 
 namespace Ez2note {
 namespace Gui {
@@ -12,9 +13,12 @@ namespace Windows {
 namespace Main {
 namespace Buffers {
 
-class AbstractBuffer : public wxPanel {
+/** Base class for buffers: a widget wrapping a text editor. */
+class AbstractBuffer : public QWidget {
+    Q_OBJECT
+
    public:
-    AbstractBuffer(wxWindow* parent, Ez2note::Config& config);
+    AbstractBuffer(QWidget* parent, Ez2note::Config& config);
     virtual ~AbstractBuffer() = default;
 
     virtual void Undo();
@@ -22,12 +26,12 @@ class AbstractBuffer : public wxPanel {
     virtual void SetShowLineNumbers(bool show);
     virtual void SetWordWrap(bool wrap);
     virtual bool IsModified() const;
-    virtual wxString GetTitle() const = 0;
+    virtual QString GetTitle() const = 0;
 
-    wxStyledTextCtrl* GetTextEdit() const { return textEdit; }
+    CodeEditor* GetTextEdit() const { return textEdit; }
 
    protected:
-    wxStyledTextCtrl* textEdit;
+    CodeEditor* textEdit;
     Ez2note::Config& config;
 };
 
